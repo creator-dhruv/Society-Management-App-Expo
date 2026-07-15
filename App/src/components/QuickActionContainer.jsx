@@ -28,10 +28,22 @@ const QuickActionButton = [
     backgroundColor: "#A78BFA",
   },
   {
+    title: "Notice   Board",
+    icon: "newspaper",
+    color: "#cdd406",
+    backgroundColor: "#eed622",
+  },
+  {
     title: "Pay Maintenance",
     icon: "card",
     color: "#06B6D4",
     backgroundColor: "#22D3EE",
+  },
+  {
+    title: "SOS Emergency",
+    icon: "flame",
+    color: "#f91616",
+    backgroundColor: "#fb3c3c",
   },
   {
     title: "Raise Complaint",
@@ -46,7 +58,12 @@ const QuickActionContainer = () => {
   const router = useRouter();
 
   return (
-    <View style={{ marginHorizontal: 10 }}>
+    <View
+      style={{
+        width: width,
+        alignSelf: "center",
+      }}
+    >
       <View
         style={{
           paddingHorizontal: 20,
@@ -93,12 +110,13 @@ const QuickActionContainer = () => {
       </View>
       <FlatList
         data={QuickActionButton}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
+        // horizontal={true}
+        numColumns={2}
+        // showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View
             style={{
-              width: width * 0.44,
+              width: width * 0.45,
               height: height * 0.25,
               margin: 10,
             }}
