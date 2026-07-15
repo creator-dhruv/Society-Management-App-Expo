@@ -362,15 +362,13 @@ const ApprovalCardStack = () => {
     <View
       style={{
         marginTop: 20,
-        paddingHorizontal: 10,
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         alignSelf: "center",
         height:
           CARD_HEIGHT +
-          STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2) +
-          5,
+          STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2),
         width: width,
       }}
     >
