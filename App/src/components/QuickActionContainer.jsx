@@ -94,6 +94,7 @@ const QuickActionContainer = () => {
       <FlatList
         data={QuickActionButton}
         horizontal={true}
+        showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View
             style={{
