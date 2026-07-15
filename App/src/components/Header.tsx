@@ -14,7 +14,8 @@ const Header = () => {
       style={{
         flexDirection: "row",
         alignItems: "center",
-        width: width,
+        width: "100%",
+        paddingHorizontal: 20,
         justifyContent: "space-between",
       }}
     >
@@ -23,7 +24,6 @@ const Header = () => {
           flexDirection: "row",
           alignItems: "flex-end",
           justifyContent: "center",
-          marginLeft: 10,
           gap: 5,
         }}
       >
