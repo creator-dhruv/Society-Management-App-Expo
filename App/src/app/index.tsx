@@ -1,11 +1,6 @@
 import Header from "@/components/Header";
 import QuickActionContainer from "@/components/QuickActionContainer";
-import {
-  VisitorApprovalCard,
-  DeliveryApprovalCard,
-  HouseHelpApprovalCard,
-  ApprovalCardStack,
-} from "@/components/VisitorApprovalCard";
+import ApprovalCardStack from "@/components/ApprovalCardStack";
 import { ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,14 +9,7 @@ export default function Index() {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Header />
-        <ApprovalCardStack
-          children={[
-            <VisitorApprovalCard />,
-            <VisitorApprovalCard />,
-            <DeliveryApprovalCard />,
-            <HouseHelpApprovalCard />,
-          ]}
-        />
+        <ApprovalCardStack />
         <QuickActionContainer />
       </ScrollView>
     </SafeAreaView>
