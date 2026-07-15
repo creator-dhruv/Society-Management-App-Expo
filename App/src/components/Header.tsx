@@ -23,6 +23,7 @@ const Header = () => {
           flexDirection: "row",
           alignItems: "flex-end",
           justifyContent: "center",
+          marginLeft: 10,
           gap: 5,
         }}
       >
