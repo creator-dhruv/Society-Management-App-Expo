@@ -29,7 +29,7 @@ export const Colors = {
   // ==========================
   // Background
   // ==========================
-  background: "#F7FAFC",
+  background: "#ecf4f9",
   surface: "#FFFFFF",
   surfaceSecondary: "#F8FBFD",
   surfaceTertiary: "#EEF5FA",
