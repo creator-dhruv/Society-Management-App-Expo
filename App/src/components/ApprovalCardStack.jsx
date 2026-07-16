@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
@@ -16,10 +16,10 @@ import Animated, {
   FadeIn,
   FadeOut,
 } from "react-native-reanimated";
-import { useState } from "react";
 
 const ApprovalCard = ({ data, onDismiss }) => {
   const { width } = useDimension();
+  const cardWidth = width - Colors.spacing.xl * 2;
 
   const theme = Colors.approvalCard[data.type];
 
@@ -74,20 +74,12 @@ const ApprovalCard = ({ data, onDismiss }) => {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
-          width,
+          width: cardWidth,
           padding: 22,
           borderRadius: 28,
           overflow: "hidden",
 
-          shadowColor: theme.shadow,
-          shadowOpacity: 0.35,
-          shadowRadius: 18,
-          shadowOffset: {
-            width: 0,
-            height: 10,
-          },
-
-          elevation: 12,
+          ...Colors.shadowStyle.card,
         }}
       >
         {/* Glow */}
@@ -229,6 +221,8 @@ const ApprovalCard = ({ data, onDismiss }) => {
         >
           <TouchableOpacity
             onPress={() => dismiss("right")}
+            accessibilityRole="button"
+            accessibilityLabel={`${data.primaryButton} ${data.title}`}
             style={{
               flex: 1,
               height: 52,
@@ -251,6 +245,8 @@ const ApprovalCard = ({ data, onDismiss }) => {
 
           <TouchableOpacity
             onPress={() => dismiss("left")}
+            accessibilityRole="button"
+            accessibilityLabel={`${data.secondaryButton} ${data.title}`}
             style={{
               flex: 1,
               height: 52,
@@ -353,6 +349,7 @@ const INITIAL_CARDS = [
 const ApprovalCardStack = () => {
   const [cards, setCards] = useState(INITIAL_CARDS);
   const { width } = useDimension();
+  const cardWidth = width - Colors.spacing.xl * 2;
 
   const removeCard = (id) => {
     setCards((prev) => prev.filter((item) => item.id !== id));
@@ -369,7 +366,7 @@ const ApprovalCardStack = () => {
         height:
           CARD_HEIGHT +
           STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2),
-        width: width,
+        width: cardWidth,
       }}
     >
       {cards.slice(0, MAX_VISIBLE).map((card, index) => {
