@@ -218,12 +218,108 @@ export const Colors = {
   },
 
   // ==========================
+  // Event Card
+  // ==========================
+
+  // Colors.js
+
+  eventCard: {
+    Meeting: {
+      gradient: ["#60A5FA", "#3B82F6", "#2563EB"],
+      chip: "#DBEAFE",
+      chipText: "#1D4ED8",
+      shadow: "#2563EB",
+      icon: "#FFFFFF",
+    },
+
+    Festival: {
+      gradient: ["#FB923C", "#F97316", "#EA580C"],
+      chip: "#FFEDD5",
+      chipText: "#d0460f",
+      shadow: "#EA580C",
+      icon: "#FFFFFF",
+    },
+
+    Sports: {
+      gradient: ["#4ADE80", "#22C55E", "#16A34A"],
+      chip: "#DCFCE7",
+      chipText: "#15803D",
+      shadow: "#16A34A",
+      icon: "#FFFFFF",
+    },
+
+    Workshop: {
+      gradient: ["#C084FC", "#8B5CF6", "#6D28D9"],
+      chip: "#F3E8FF",
+      chipText: "#7E22CE",
+      shadow: "#7C3AED",
+      icon: "#FFFFFF",
+    },
+
+    Cultural: {
+      gradient: ["#F472B6", "#EC4899", "#DB2777"],
+      chip: "#FCE7F3",
+      chipText: "#BE185D",
+      shadow: "#DB2777",
+      icon: "#FFFFFF",
+    },
+
+    Default: {
+      gradient: ["#60A5FA", "#3B82F6", "#2563EB"],
+      chip: "#DBEAFE",
+      chipText: "#1D4ED8",
+      shadow: "#2563EB",
+      icon: "#FFFFFF",
+    },
+  },
+
+  // ==========================
   // Gradients
   // ==========================
   gradient: {
     primary: ["#00B2FF", "#6DD5FF"],
     dark: ["#00B2FF", "#0095E6"],
     success: ["#16C784", "#22D3A6"],
+  },
+
+  // ==========================
+  // Layout tokens
+  // ==========================
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 20,
+    "2xl": 24,
+    "3xl": 32,
+  },
+
+  radius: {
+    sm: 12,
+    md: 16,
+    lg: 24,
+    xl: 28,
+    pill: 999,
+  },
+
+  shadowStyle: {
+    card: {
+      shadowColor: "#0F172A",
+      shadowOpacity: 0.08,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 4,
+    },
+  },
+
+  quickAction: {
+    visitors: { color: "#059669", backgroundColor: "#34D399" },
+    amenities: { color: "#7C3AED", backgroundColor: "#A78BFA" },
+    notices: { color: "#A16207", backgroundColor: "#FCD34D" },
+    payments: { color: "#0891B2", backgroundColor: "#22D3EE" },
+    emergency: { color: "#DC2626", backgroundColor: "#F87171" },
+    complaints: { color: "#EA580C", backgroundColor: "#FB923C" },
   },
 } as const;
 
