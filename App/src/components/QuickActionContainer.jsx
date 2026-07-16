@@ -13,21 +13,25 @@ const QUICK_ACTIONS = [
     title: "Manage Visitors",
     icon: "person",
     theme: Colors.quickAction.visitors,
+    onPress: "/visitors",
   },
   {
     title: "Book Amenities",
     icon: "fitness",
     theme: Colors.quickAction.amenities,
+    onPress: "/amenities",
   },
   {
     title: "Notice Board",
     icon: "newspaper",
     theme: Colors.quickAction.notices,
+    onPress: "/noticeboard",
   },
   {
     title: "Pay Maintenance",
     icon: "card",
     theme: Colors.quickAction.payments,
+    onPress: "/maintenance",
   },
   {
     title: "SOS Emergency",
@@ -38,6 +42,7 @@ const QUICK_ACTIONS = [
     title: "Raise Complaint",
     icon: "warning",
     theme: Colors.quickAction.complaints,
+    onPress: "/complaint",
   },
 ];
 
@@ -128,7 +133,7 @@ export default function QuickActionContainer() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={item.title}
-              onPress={() => router.navigate("/demo")}
+              onPress={() => router.push(item.onPress || "/")}
               style={({ pressed }) => ({
                 width: "100%",
                 height: "100%",
@@ -138,115 +143,115 @@ export default function QuickActionContainer() {
                 ...Colors.shadowStyle.card,
               })}
             >
-            <LinearGradient
-              colors={[Colors.surface, Colors.surfaceSecondary]}
-              style={{
-                flex: 1,
-                padding: Colors.spacing.lg,
-                borderRadius: Colors.radius.xl,
-                borderWidth: 1,
-                borderColor: Colors.divider,
-              }}
-            >
-              <View
+              <LinearGradient
+                colors={[Colors.surface, Colors.surfaceSecondary]}
                 style={{
-                  position: "absolute",
-                  right: -30,
-                  top: -30,
-                  width: 120,
-                  height: 120,
-                  borderRadius: 60,
-                  backgroundColor: item.theme.color + "12",
-                }}
-              />
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  flex: 1,
+                  padding: Colors.spacing.lg,
+                  borderRadius: Colors.radius.xl,
+                  borderWidth: 1,
+                  borderColor: Colors.divider,
                 }}
               >
-                <LinearGradient
-                  colors={[item.theme.backgroundColor, item.theme.color]}
-                  style={{
-                    width: 58,
-                    height: 58,
-                    borderRadius: Colors.radius.md,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons
-                    name={item.icon}
-                    size={28}
-                    color={Colors.text.white}
-                  />
-                </LinearGradient>
                 <View
                   style={{
-                    width: 38,
-                    height: 38,
-                    borderRadius: 19,
-                    backgroundColor: Colors.surface,
-                    justifyContent: "center",
+                    position: "absolute",
+                    right: -30,
+                    top: -30,
+                    width: 120,
+                    height: 120,
+                    borderRadius: 60,
+                    backgroundColor: item.theme.color + "12",
+                  }}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                     alignItems: "center",
                   }}
                 >
-                  <Ionicons
-                    name="arrow-forward"
-                    size={18}
-                    color={Colors.text.muted}
+                  <LinearGradient
+                    colors={[item.theme.backgroundColor, item.theme.color]}
+                    style={{
+                      width: 58,
+                      height: 58,
+                      borderRadius: Colors.radius.md,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Ionicons
+                      name={item.icon}
+                      size={28}
+                      color={Colors.text.white}
+                    />
+                  </LinearGradient>
+                  <View
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 19,
+                      backgroundColor: Colors.surface,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Ionicons
+                      name="arrow-forward"
+                      size={18}
+                      color={Colors.text.muted}
+                    />
+                  </View>
+                </View>
+                <View style={{ flex: 1, marginTop: Colors.spacing.sm }} />
+                <Text
+                  numberOfLines={2}
+                  style={{
+                    fontFamily: Fonts.bold,
+                    fontSize: FontSize.lg,
+                    color: Colors.text.primary,
+                    lineHeight: 24,
+                  }}
+                >
+                  {item.title}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    marginTop: 6,
+                    color: Colors.text.tertiary,
+                    fontSize: FontSize.xs,
+                    fontFamily: Fonts.medium,
+                  }}
+                >
+                  Tap to continue
+                </Text>
+                <View
+                  style={{
+                    marginTop: Colors.spacing.lg,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 34,
+                      height: 5,
+                      borderRadius: Colors.radius.pill,
+                      backgroundColor: item.theme.color,
+                    }}
+                  />
+                  <View
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      marginLeft: Colors.spacing.sm,
+                      backgroundColor: Colors.border,
+                    }}
                   />
                 </View>
-              </View>
-              <View style={{ flex: 1, marginTop: Colors.spacing.sm }} />
-              <Text
-                numberOfLines={2}
-                style={{
-                  fontFamily: Fonts.bold,
-                  fontSize: FontSize.lg,
-                  color: Colors.text.primary,
-                  lineHeight: 24,
-                }}
-              >
-                {item.title}
-              </Text>
-              <Text
-                numberOfLines={1}
-                style={{
-                  marginTop: 6,
-                  color: Colors.text.tertiary,
-                  fontSize: FontSize.xs,
-                  fontFamily: Fonts.medium,
-                }}
-              >
-                Tap to continue
-              </Text>
-              <View
-                style={{
-                  marginTop: Colors.spacing.lg,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <View
-                  style={{
-                    width: 34,
-                    height: 5,
-                    borderRadius: Colors.radius.pill,
-                    backgroundColor: item.theme.color,
-                  }}
-                />
-                <View
-                  style={{
-                    flex: 1,
-                    height: 1,
-                    marginLeft: Colors.spacing.sm,
-                    backgroundColor: Colors.border,
-                  }}
-                />
-              </View>
-            </LinearGradient>
+              </LinearGradient>
             </Pressable>
           </View>
         )}

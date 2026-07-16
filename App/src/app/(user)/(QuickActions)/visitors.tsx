@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const amenities = () => {
+const visitors = () => {
   return (
     <View>
-      <Text>amenities</Text>
+      <Text>visitors</Text>
     </View>
   );
 };
 
-export default amenities;
+export default visitors;
 
 const styles = StyleSheet.create({});

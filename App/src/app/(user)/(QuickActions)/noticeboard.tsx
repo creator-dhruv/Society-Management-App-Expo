@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 
-const amenities = () => {
+const noticeboard = () => {
   return (
     <View>
-      <Text>amenities</Text>
+      <Text>noticeboard</Text>
     </View>
   );
 };
 
-export default amenities;
+export default noticeboard;
 
 const styles = StyleSheet.create({});
