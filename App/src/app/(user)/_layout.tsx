@@ -9,7 +9,10 @@ import {
 
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { Tabs } from "expo-router";
-import { View, Pressable, Text } from "react-native";
+import { Pressable, Text } from "react-native";
+import { BlurView } from "expo-blur";
+import Colors from "@/constants/color";
+import { Fonts } from "@/constants/font";
 
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const currentRoute = state.routes[state.index].name;
@@ -19,7 +22,9 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   }
 
   return (
-    <View
+    <BlurView
+      intensity={85}
+      tint="light"
       style={{
         position: "absolute",
         left: 40,
@@ -27,18 +32,21 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         bottom: 20,
         height: 65,
         marginHorizontal: 4,
-        backgroundColor: "#ffffffd9",
-        borderRadius: 35,
+        backgroundColor: "#ffffff8d",
+        borderRadius: Colors.radius.pill,
+        overflow: "hidden",
         flexDirection: "row",
         justifyContent:
-          state.index == 0
+          state.index === 0
             ? "flex-start"
-            : state.index == 1
+            : state.index === 1
               ? "center"
               : "flex-end",
         alignItems: "center",
         paddingHorizontal: 8,
-        elevation: 10,
+        borderWidth: 1.5,
+        borderColor: "#514a4a52",
+        ...Colors.shadowStyle.card,
       }}
     >
       {state.routes.map((route: any, index: number) => {
@@ -65,22 +73,24 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: focused ? "#000" : "transparent",
+              backgroundColor: focused
+                ? Colors.text.primary
+                : Colors.transparent,
             }}
           >
             <Ionicons
               name={iconName}
               size={focused ? 24 : 30}
-              color={focused ? "#fff" : "#000"}
+              color={focused ? Colors.text.white : Colors.icon.dark}
             />
 
             {focused && (
               <Text
                 style={{
-                  color: focused ? "#fff" : "#000",
+                  color: Colors.text.white,
                   marginLeft: 8,
                   fontSize: 16,
-                  fontWeight: "600",
+                  fontFamily: Fonts.semibold,
                 }}
               >
                 {label}
@@ -89,7 +99,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
           </Pressable>
         );
       })}
-    </View>
+    </BlurView>
   );
 }
 

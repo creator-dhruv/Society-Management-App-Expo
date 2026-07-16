@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import QuickActionContainer from "@/components/QuickActionContainer";
 import ApprovalCardStack from "@/components/ApprovalCardStack";
-import CommunityContainer from "@/components/CommunityContainer";
+import UpcomingEventsContainer from "@/components/UpcomingEventsContainer";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "@/constants/color";
@@ -12,19 +12,11 @@ export default function Index() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Header />
         <ApprovalCardStack />
-        <View
-          style={{
-            backgroundColor: Colors.surface,
-            borderTopEndRadius: 40,
-            borderTopStartRadius: 40,
-            marginTop: 10,
-            paddingVertical: 20,
-            paddingBottom: 100,
-            elevation: 5,
-            shadowColor: Colors.black,
-          }}
-        >
+        <View style={styles.contentSurface}>
           <QuickActionContainer />
+          <View style={styles.eventsSurface}>
+            <UpcomingEventsContainer />
+          </View>
         </View>
 
         {/* <CommunityContainer /> */}
@@ -38,5 +30,18 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
+    backgroundColor: Colors.background,
+  },
+  contentSurface: {
+    backgroundColor: Colors.surface,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    marginTop: Colors.spacing.md,
+    paddingTop: Colors.spacing.xl,
+  },
+  eventsSurface: {
+    marginTop: Colors.spacing.sm,
+    paddingTop: Colors.spacing.xl,
+    paddingBottom: 120,
   },
 });
