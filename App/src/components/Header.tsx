@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, Image } from "react-native";
+import { Text, View, Pressable, Image } from "react-native";
 import React from "react";
 import { Ionicons } from "@react-native-vector-icons/ionicons";
 import useDimension from "@/hooks/dimensions";
@@ -27,7 +27,7 @@ const Header = () => {
           gap: 5,
         }}
       >
-        <Ionicons name="location-outline" size={50} />
+        <Ionicons name="location-outline" size={42} color={Colors.icon.dark} />
         <View
           style={{
             flexDirection: "column",
@@ -37,7 +37,7 @@ const Header = () => {
         >
           <Text
             style={{
-              color: Colors.text.muted,
+              color: Colors.text.tertiary,
               fontFamily: Fonts.semibold,
               fontSize: FontSize["sm"],
             }}
@@ -73,11 +73,11 @@ const Header = () => {
       <Pressable
         onPress={() => navigate.push("/demo")}
         style={{
-          backgroundColor: "black",
+          backgroundColor: Colors.surface,
           width: 50,
           height: 50,
-          borderRadius: 30,
-          elevation: 20,
+          borderRadius: 25,
+          ...Colors.shadowStyle.card,
         }}
       >
         <Image
@@ -85,8 +85,9 @@ const Header = () => {
           style={{
             width: 50,
             height: 50,
-            borderRadius: 30,
+            borderRadius: 25,
             borderWidth: 0.5,
+            borderColor: Colors.border,
           }}
         />
         {/* <Image
@@ -101,5 +102,3 @@ const Header = () => {
 };
 
 export default Header;
-
-const styles = StyleSheet.create({});
