@@ -1,4 +1,10 @@
-import { Text, View, TouchableOpacity, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+} from "react-native";
 import React from "react";
 import useDimension from "@/hooks/dimensions";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,7 +13,7 @@ import Ionicons from "@react-native-vector-icons/ionicons";
 import Color from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
 
-export const UpcomingEvents = [
+const UpcomingEvents = [
   {
     id: "evt-001",
     title: "Independence Day Flag Hoisting",
@@ -211,94 +217,36 @@ export const UpcomingEvents = [
 
 const EventCard = ({ event, onPress }) => {
   const { width } = useDimension();
+
   const cardWidth = Math.min(width - 64, 360);
   const theme = Color.eventCard[event.category] ?? Color.eventCard.Default;
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       accessibilityRole="button"
       accessibilityLabel={`View ${event.title}`}
+      onPress={onPress}
     >
       <LinearGradient
         colors={theme.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{
-          width: cardWidth,
-          borderRadius: 28,
-          overflow: "hidden",
-          padding: 22,
-          margin: 10,
-
-          ...Color.shadowStyle.card,
-        }}
+        style={[styles.card, { width: cardWidth }]}
       >
-        {/* Background circles */}
+        <View style={styles.topCircle} />
 
-        <View
-          style={{
-            position: "absolute",
-            top: -70,
-            right: -50,
-            width: 180,
-            height: 180,
-            borderRadius: 90,
-            backgroundColor: "#ffffff1f",
-          }}
-        />
-
-        <View
-          style={{
-            position: "absolute",
-            bottom: -60,
-            left: -40,
-            width: 130,
-            height: 130,
-            borderRadius: 65,
-            backgroundColor: "#ffffff14",
-          }}
-        />
+        <View style={styles.bottomCircle} />
 
         {/* Header */}
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: "#ffffff2e",
-              paddingHorizontal: 14,
-              paddingVertical: 7,
-              borderRadius: 20,
-            }}
-          >
-            <Text
-              style={{
-                color: "#FFF",
-                fontFamily: Fonts.bold,
-              }}
-            >
-              {event.category}
-            </Text>
+        <View style={styles.header}>
+          <View style={styles.chip}>
+            <Text style={styles.chipText}>{event.category}</Text>
           </View>
 
-          <View
-            style={{
-              backgroundColor: "#ffffff2e",
-              paddingHorizontal: 14,
-              paddingVertical: 7,
-              borderRadius: 20,
-            }}
-          >
-            <Text
-              style={{
-                color: "#FFF",
-                fontFamily: Fonts.bold,
-              }}
-            >
+          <View style={styles.chip}>
+            <Text style={styles.chipText}>
               {event.isPaid ? `₹${event.fee}` : "FREE"}
             </Text>
           </View>
@@ -306,179 +254,70 @@ const EventCard = ({ event, onPress }) => {
 
         {/* Title */}
 
-        <Text
-          numberOfLines={2}
-          style={{
-            marginTop: 18,
-            color: "#FFF",
-            fontFamily: Fonts.bold,
-            fontSize: 22,
-          }}
-        >
+        <Text numberOfLines={2} style={styles.title}>
           {event.title}
         </Text>
 
-        <Text
-          numberOfLines={2}
-          style={{
-            marginTop: 8,
-            color: "rgba(255,255,255,.82)",
-            fontFamily: Fonts.medium,
-            lineHeight: 22,
-          }}
-        >
+        <Text numberOfLines={2} style={styles.description}>
           {event.description}
         </Text>
 
-        {/* Time */}
+        {/* Event Info */}
 
-        <View
-          style={{
-            marginVertical: 14,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 12,
-            }}
-          >
+        <View style={styles.infoContainer}>
+          <View style={styles.infoRow}>
             <Ionicons name="calendar-outline" color="#FFF" size={18} />
 
-            <Text
-              style={{
-                color: "#FFF",
-                marginLeft: 8,
-                fontFamily: Fonts.medium,
-              }}
-            >
-              30 AUG
-            </Text>
+            <Text style={styles.infoText}>30 AUG</Text>
 
             <Ionicons
-              style={{
-                marginLeft: 18,
-              }}
               name="time-outline"
               color="#FFF"
               size={18}
+              style={styles.timeIcon}
             />
 
-            <Text
-              style={{
-                color: "#FFF",
-                marginLeft: 8,
-              }}
-            >
-              {event.startTime}
-            </Text>
+            <Text style={styles.infoText}>{event.startTime}</Text>
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
+          <View style={styles.infoRow}>
             <Ionicons name="location-outline" color="#FFF" size={18} />
 
-            <Text
-              style={{
-                color: "#FFF",
-                marginLeft: 8,
-              }}
-            >
-              {event.location}
-            </Text>
+            <Text style={styles.infoText}>{event.location}</Text>
           </View>
         </View>
 
-        {/* Registration Required */}
-        <View
-          style={{
-            backgroundColor: "#ffffff2e",
-            paddingHorizontal: 14,
-            paddingVertical: 7,
-            borderRadius: 20,
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "#FFF",
-              fontFamily: Fonts.bold,
-            }}
-          >
+        {/* Registration */}
+
+        <View style={styles.chipCenter}>
+          <Text style={styles.chipText}>
             {event.registrationRequired
               ? "Registration Required"
               : "Open for All"}
           </Text>
         </View>
 
-        {/* Ticket Divider */}
+        {/* Divider */}
 
-        <View
-          style={{
-            marginVertical: 18,
-            height: 1,
-            backgroundColor: "rgba(255,255,255,.25)",
-          }}
-        />
+        <View style={styles.divider} />
 
         {/* Ticket Cuts */}
 
-        <View
-          style={{
-            position: "absolute",
-            left: -15,
-            bottom: 84,
-            width: 30,
-            height: 30,
-            borderRadius: 15,
-            backgroundColor: Color.background,
-          }}
-        />
+        <View style={styles.leftCut} />
 
-        <View
-          style={{
-            position: "absolute",
-            right: -15,
-            bottom: 84,
-            width: 30,
-            height: 30,
-            borderRadius: 15,
-            backgroundColor: Color.background,
-          }}
-        />
+        <View style={styles.rightCut} />
 
         {/* Footer */}
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              height: 54,
-              borderRadius: 27,
-              backgroundColor: "#FFF",
-
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {/* <Ionicons name="arrow-forward" size={22} color={theme.shadow} /> */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.button}>
             <Text
-              style={{
-                color: theme.chipText,
-                fontFamily: Fonts.bold,
-                fontSize: 16,
-              }}
+              style={[
+                styles.buttonText,
+                {
+                  color: theme.chipText,
+                },
+              ]}
             >
               Connect to Organizer
             </Text>
@@ -491,64 +330,189 @@ const EventCard = ({ event, onPress }) => {
 
 const UpcomingEventsContainer = () => {
   return (
-    <View
-      style={{
-        width: "100%",
-        alignSelf: "center",
-      }}
-    >
-      <View
-        style={{
-          paddingHorizontal: 20,
-          marginBottom: 8,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 10,
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: FontSize["2xl"],
-                fontFamily: Fonts.bold,
-                color: "#0F172A",
-                letterSpacing: -0.7,
-              }}
-            >
-              Upcoming Events
-            </Text>
-          </View>
+    <View style={style.container}>
+      <View style={style.header}>
+        <Text style={style.title}>Upcoming Events</Text>
 
-          <Text
-            style={{
-              fontSize: FontSize["sm"],
-              color: "#64748B",
-              fontFamily: Fonts.medium,
-              lineHeight: 20,
-            }}
-          >
-            Stay connected in your community
-          </Text>
-        </View>
+        <Text style={style.subtitle}>Stay connected in your community</Text>
       </View>
+
       <FlatList
         data={UpcomingEvents}
-        horizontal={true}
+        horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
+        contentContainerStyle={styles.listContent}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <EventCard event={item} />}
       />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    borderRadius: 28,
+    overflow: "hidden",
+    padding: 22,
+    margin: 10,
+    ...Color.shadowStyle.card,
+  },
+
+  topCircle: {
+    position: "absolute",
+    top: -70,
+    right: -50,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: "#ffffff1f",
+  },
+
+  bottomCircle: {
+    position: "absolute",
+    bottom: -60,
+    left: -40,
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: "#ffffff14",
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  chip: {
+    backgroundColor: "#ffffff2e",
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+  },
+
+  chipCenter: {
+    backgroundColor: "#ffffff2e",
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    alignItems: "center",
+  },
+
+  chipText: {
+    color: "#FFF",
+    fontFamily: Fonts.bold,
+  },
+
+  title: {
+    marginTop: 18,
+    color: "#FFF",
+    fontFamily: Fonts.bold,
+    fontSize: 22,
+  },
+
+  description: {
+    marginTop: 8,
+    color: "rgba(255,255,255,.82)",
+    fontFamily: Fonts.medium,
+    lineHeight: 22,
+  },
+
+  infoContainer: {
+    marginVertical: 14,
+  },
+
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  infoText: {
+    color: "#FFF",
+    marginLeft: 8,
+    fontFamily: Fonts.medium,
+  },
+
+  timeIcon: {
+    marginLeft: 18,
+  },
+
+  divider: {
+    marginVertical: 18,
+    height: 1,
+    backgroundColor: "rgba(255,255,255,.25)",
+  },
+
+  leftCut: {
+    position: "absolute",
+    left: -15,
+    bottom: 84,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: Color.background,
+  },
+
+  rightCut: {
+    position: "absolute",
+    right: -15,
+    bottom: 84,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: Color.background,
+  },
+
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  button: {
+    width: "100%",
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: "#FFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  buttonText: {
+    fontFamily: Fonts.bold,
+    fontSize: 16,
+  },
+});
+
+const style = StyleSheet.create({
+  container: {
+    width: "100%",
+    alignSelf: "center",
+  },
+
+  header: {
+    paddingHorizontal: 20,
+    marginBottom: 8,
+    flex: 1,
+  },
+
+  title: {
+    fontSize: FontSize["2xl"],
+    fontFamily: Fonts.bold,
+    color: "#0F172A",
+    letterSpacing: -0.7,
+  },
+
+  subtitle: {
+    fontSize: FontSize.sm,
+    color: "#64748B",
+    fontFamily: Fonts.medium,
+    lineHeight: 20,
+  },
+
+  listContent: {
+    paddingHorizontal: 10,
+  },
+});
 
 export default UpcomingEventsContainer;

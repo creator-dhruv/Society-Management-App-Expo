@@ -71,7 +71,7 @@ const Header = () => {
         </View>
       </Pressable>
       <Pressable
-        onPress={() => navigate.push("/demo")}
+        onPress={() => navigate.push("/(user)/(tabs)/community")}
         style={{
           backgroundColor: Colors.surface,
           width: 50,

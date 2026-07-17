@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
@@ -12,9 +12,9 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   runOnJS,
-  Layout,
   FadeIn,
   FadeOut,
+  Layout,
 } from "react-native-reanimated";
 
 const ApprovalCard = ({ data, onDismiss }) => {
@@ -31,20 +31,16 @@ const ApprovalCard = ({ data, onDismiss }) => {
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
     transform: [
-      {
-        translateX: translateX.value,
-      },
-      {
-        scale: scale.value,
-      },
-      {
-        rotate: `${rotate.value}deg`,
-      },
+      { translateX: translateX.value },
+      { scale: scale.value },
+      { rotate: `${rotate.value}deg` },
     ],
   }));
 
   const dismiss = (direction) => {
-    scale.value = withTiming(0.95, { duration: 120 });
+    scale.value = withTiming(0.95, {
+      duration: 120,
+    });
 
     rotate.value = withTiming(direction === "right" ? 8 : -8, {
       duration: 300,
@@ -73,132 +69,93 @@ const ApprovalCard = ({ data, onDismiss }) => {
         colors={theme.gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{
-          width: cardWidth,
-          padding: 22,
-          borderRadius: 28,
-          overflow: "hidden",
-
-          ...Colors.shadowStyle.card,
-        }}
+        style={[styles.card, { width: cardWidth }]}
       >
         {/* Glow */}
 
         <View
-          style={{
-            position: "absolute",
-            top: -60,
-            right: -40,
-            width: 180,
-            height: 180,
-            borderRadius: 90,
-            backgroundColor: theme.glowTop,
-          }}
+          style={[
+            styles.topGlow,
+            {
+              backgroundColor: theme.glowTop,
+            },
+          ]}
         />
 
         <View
-          style={{
-            position: "absolute",
-            bottom: -70,
-            left: -40,
-            width: 140,
-            height: 140,
-            borderRadius: 70,
-            backgroundColor: theme.glowBottom,
-          }}
+          style={[
+            styles.bottomGlow,
+            {
+              backgroundColor: theme.glowBottom,
+            },
+          ]}
         />
 
         {/* Header */}
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.header}>
           <View>
             <Text
-              style={{
-                color: theme.text,
-                fontFamily: Fonts.bold,
-                fontSize: 24,
-              }}
+              style={[
+                styles.title,
+                {
+                  color: theme.text,
+                },
+              ]}
             >
               {data.title}
             </Text>
 
             <Text
-              style={{
-                marginTop: 4,
-                color: theme.subText,
-                fontFamily: Fonts.medium,
-                fontSize: 14,
-              }}
+              style={[
+                styles.subtitle,
+                {
+                  color: theme.subText,
+                },
+              ]}
             >
               {data.subtitle}
             </Text>
           </View>
 
-          <View
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 24,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(255,255,255,0.12)",
-            }}
-          >
+          <View style={styles.headerIconContainer}>
             <Ionicons name={data.icon} size={30} color={theme.iconColor} />
           </View>
         </View>
 
         {/* Body */}
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginTop: 24,
-          }}
-        >
+        <View style={styles.body}>
           <View
-            style={{
-              width: 58,
-              height: 58,
-              borderRadius: 29,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: theme.iconBackground,
-            }}
+            style={[
+              styles.avatar,
+              {
+                backgroundColor: theme.iconBackground,
+              },
+            ]}
           >
             <Ionicons name={data.icon} size={30} color={theme.iconColor} />
           </View>
 
-          <View
-            style={{
-              flex: 1,
-              marginLeft: 14,
-            }}
-          >
+          <View style={styles.info}>
             <Text
-              style={{
-                color: theme.text,
-                fontSize: 18,
-                fontFamily: Fonts.bold,
-              }}
+              style={[
+                styles.name,
+                {
+                  color: theme.text,
+                },
+              ]}
             >
               {data.name}
             </Text>
 
             <Text
-              style={{
-                marginTop: 4,
-                color: theme.subText,
-                fontSize: 14,
-                fontFamily: Fonts.medium,
-              }}
+              style={[
+                styles.infoText,
+                {
+                  color: theme.subText,
+                },
+              ]}
             >
               {data.info}
             </Text>
@@ -213,56 +170,49 @@ const ApprovalCard = ({ data, onDismiss }) => {
 
         {/* Buttons */}
 
-        <View
-          style={{
-            flexDirection: "row",
-            marginTop: 24,
-          }}
-        >
+        <View style={styles.buttonRow}>
           <TouchableOpacity
-            onPress={() => dismiss("right")}
             accessibilityRole="button"
             accessibilityLabel={`${data.primaryButton} ${data.title}`}
-            style={{
-              flex: 1,
-              height: 52,
-              borderRadius: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: theme.primaryButton,
-              marginRight: 10,
-            }}
+            onPress={() => dismiss("right")}
+            style={[
+              styles.primaryButton,
+              {
+                backgroundColor: theme.primaryButton,
+              },
+            ]}
           >
             <Text
-              style={{
-                color: theme.primaryButtonText,
-                fontFamily: Fonts.bold,
-              }}
+              style={[
+                styles.primaryButtonText,
+                {
+                  color: theme.primaryButtonText,
+                },
+              ]}
             >
               {data.primaryButton}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => dismiss("left")}
             accessibilityRole="button"
             accessibilityLabel={`${data.secondaryButton} ${data.title}`}
-            style={{
-              flex: 1,
-              height: 52,
-              borderRadius: 16,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: theme.secondaryButton,
-              borderWidth: 1,
-              borderColor: theme.secondaryBorder,
-            }}
+            onPress={() => dismiss("left")}
+            style={[
+              styles.secondaryButton,
+              {
+                backgroundColor: theme.secondaryButton,
+                borderColor: theme.secondaryBorder,
+              },
+            ]}
           >
             <Text
-              style={{
-                color: theme.text,
-                fontFamily: Fonts.bold,
-              }}
+              style={[
+                styles.secondaryButtonText,
+                {
+                  color: theme.text,
+                },
+              ]}
             >
               {data.secondaryButton}
             </Text>
@@ -272,10 +222,6 @@ const ApprovalCard = ({ data, onDismiss }) => {
     </Animated.View>
   );
 };
-
-const CARD_HEIGHT = 285;
-const STACK_OFFSET = 18;
-const MAX_VISIBLE = 3;
 
 const INITIAL_CARDS = [
   {
@@ -316,8 +262,8 @@ const INITIAL_CARDS = [
     type: "visitor",
     title: "Visitor Waiting",
     subtitle: "Approval required",
-    name: "Rahul Sharma",
-    info: "Main Gate • 2 min ago",
+    name: "Amit Verma",
+    info: "Gate 1 • Just now",
     primaryButton: "Approve",
     secondaryButton: "Reject",
     icon: "person-circle-outline",
@@ -327,8 +273,8 @@ const INITIAL_CARDS = [
     type: "delivery",
     title: "Delivery Waiting",
     subtitle: "Verify before entry",
-    name: "Blinkit Delivery",
-    info: "Gate 2 • 1 min ago",
+    name: "Amazon Delivery",
+    info: "Main Gate • 3 min ago",
     primaryButton: "Share OTP",
     secondaryButton: "Reject",
     icon: "cube-outline",
@@ -338,8 +284,8 @@ const INITIAL_CARDS = [
     type: "houseHelp",
     title: "House Help",
     subtitle: "Daily Staff",
-    name: "Sunita Devi",
-    info: "7:58 AM",
+    name: "Ramesh Kumar",
+    info: "8:05 AM",
     primaryButton: "Allow",
     secondaryButton: "Deny",
     icon: "person-outline",
@@ -348,26 +294,29 @@ const INITIAL_CARDS = [
 
 const ApprovalCardStack = () => {
   const [cards, setCards] = useState(INITIAL_CARDS);
+  const MAX_VISIBLE = 3;
+  const CARD_HEIGHT = 280;
+  const STACK_OFFSET = 12;
+
   const { width } = useDimension();
-  const cardWidth = width - Colors.spacing.xl * 2;
+  const cardWidth = width - 40;
 
   const removeCard = (id) => {
     setCards((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const containerHeight =
+    CARD_HEIGHT + STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2);
+
   return (
     <View
-      style={{
-        marginTop: 20,
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        alignSelf: "center",
-        height:
-          CARD_HEIGHT +
-          STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2),
-        width: cardWidth,
-      }}
+      style={[
+        stackStyles.container,
+        {
+          width: cardWidth,
+          height: containerHeight,
+        },
+      ]}
     >
       {cards.slice(0, MAX_VISIBLE).map((card, index) => {
         const scale = 1 - index * 0.04;
@@ -379,14 +328,14 @@ const ApprovalCardStack = () => {
             entering={FadeIn.duration(250)}
             exiting={FadeOut.duration(250)}
             layout={Layout.springify()}
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: translateY,
-              zIndex: MAX_VISIBLE - index,
-              transform: [{ scale }],
-            }}
+            style={[
+              stackStyles.cardWrapper,
+              {
+                top: translateY,
+                zIndex: MAX_VISIBLE - index,
+                transform: [{ scale }],
+              },
+            ]}
           >
             <ApprovalCard data={card} onDismiss={() => removeCard(card.id)} />
           </Animated.View>
@@ -397,3 +346,133 @@ const ApprovalCardStack = () => {
 };
 
 export default ApprovalCardStack;
+
+const styles = StyleSheet.create({
+  card: {
+    padding: 22,
+    borderRadius: 28,
+    overflow: "hidden",
+    ...Colors.shadowStyle.card,
+  },
+
+  topGlow: {
+    position: "absolute",
+    top: -60,
+    right: -40,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+  },
+
+  bottomGlow: {
+    position: "absolute",
+    bottom: -70,
+    left: -40,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+  },
+
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  title: {
+    fontFamily: Fonts.bold,
+    fontSize: 24,
+  },
+
+  subtitle: {
+    marginTop: 4,
+    fontFamily: Fonts.medium,
+    fontSize: 14,
+  },
+
+  headerIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.12)",
+  },
+
+  body: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24,
+  },
+
+  avatar: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  info: {
+    flex: 1,
+    marginLeft: 14,
+  },
+
+  name: {
+    fontFamily: Fonts.bold,
+    fontSize: 18,
+  },
+
+  infoText: {
+    marginTop: 4,
+    fontFamily: Fonts.medium,
+    fontSize: 14,
+  },
+
+  buttonRow: {
+    flexDirection: "row",
+    marginTop: 24,
+  },
+
+  primaryButton: {
+    flex: 1,
+    height: 52,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+
+  primaryButtonText: {
+    fontFamily: Fonts.bold,
+  },
+
+  secondaryButton: {
+    flex: 1,
+    height: 52,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+  },
+
+  secondaryButtonText: {
+    fontFamily: Fonts.bold,
+  },
+});
+
+const stackStyles = StyleSheet.create({
+  container: {
+    marginTop: 20,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
+  },
+
+  cardWrapper: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+  },
+});
