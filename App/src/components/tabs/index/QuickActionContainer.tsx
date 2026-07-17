@@ -107,7 +107,7 @@ export default function QuickActionContainer() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={item.title}
-              onPress={() => router.push(item.onPress || "/")}
+              onPress={() => router.push((item.onPress as any) || "/")}
               style={({ pressed }) => [
                 styles.card,
                 {
@@ -134,7 +134,7 @@ export default function QuickActionContainer() {
                     style={styles.iconContainer}
                   >
                     <Ionicons
-                      name={item.icon}
+                      name={item.icon as any}
                       size={28}
                       color={Colors.text.white}
                     />
@@ -204,6 +204,7 @@ const styles = StyleSheet.create({
     color: Colors.text.tertiary,
     fontFamily: Fonts.medium,
     lineHeight: 20,
+    marginBottom: 10,
   },
 
   columnWrapper: {

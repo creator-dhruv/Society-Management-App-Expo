@@ -215,11 +215,13 @@ const UpcomingEvents = [
   },
 ];
 
-const EventCard = ({ event, onPress }) => {
+const EventCard = ({ event, onPress }: { event: any; onPress: () => void }) => {
   const { width } = useDimension();
 
   const cardWidth = Math.min(width - 64, 360);
-  const theme = Color.eventCard[event.category] ?? Color.eventCard.Default;
+  const theme =
+    Color.eventCard[event.category as keyof typeof Color.eventCard] ??
+    Color.eventCard.Default;
 
   return (
     <TouchableOpacity
@@ -341,9 +343,9 @@ const UpcomingEventsContainer = () => {
         data={UpcomingEvents}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
+        // contentContainerStyle={styles.listContent}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <EventCard event={item} />}
+        renderItem={({ item }) => <EventCard event={item} onPress={() => {}} />}
       />
     </View>
   );

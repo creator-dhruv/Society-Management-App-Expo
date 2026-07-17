@@ -17,11 +17,12 @@ import Animated, {
   Layout,
 } from "react-native-reanimated";
 
-const ApprovalCard = ({ data, onDismiss }) => {
+const ApprovalCard = ({ data, onDismiss }: any) => {
   const { width } = useDimension();
   const cardWidth = width - Colors.spacing.xl * 2;
 
-  const theme = Colors.approvalCard[data.type];
+  const theme =
+    Colors.approvalCard[data.type as keyof typeof Colors.approvalCard];
 
   const translateX = useSharedValue(0);
   const opacity = useSharedValue(1);
@@ -37,7 +38,7 @@ const ApprovalCard = ({ data, onDismiss }) => {
     ],
   }));
 
-  const dismiss = (direction) => {
+  const dismiss = (direction: "right" | "left") => {
     scale.value = withTiming(0.95, {
       duration: 120,
     });
@@ -301,7 +302,7 @@ const ApprovalCardStack = () => {
   const { width } = useDimension();
   const cardWidth = width - 40;
 
-  const removeCard = (id) => {
+  const removeCard = (id: string) => {
     setCards((prev) => prev.filter((item) => item.id !== id));
   };
 
