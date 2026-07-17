@@ -66,7 +66,7 @@ const ELECTRIC_COLORS = [
   "#3300ff",
 ];
 
-const getColor = (index) =>
+const getColor = (index: number) =>
   ELECTRIC_COLORS[Math.abs(index) % ELECTRIC_COLORS.length];
 
 export default function AmenitiesContainer() {
@@ -76,7 +76,7 @@ export default function AmenitiesContainer() {
   const cardHeight = height * 0.32;
 
   return (
-    <View style={styles.container}>
+    <View>
       <View style={styles.header}>
         <Text style={styles.heading}>Society Amenities</Text>
         <Text style={styles.subHeading}>
@@ -148,9 +148,7 @@ export default function AmenitiesContainer() {
 
                   <Image
                     source={{
-                      uri:
-                        item.image ||
-                        "https://cdn.sportsforlife.in/shared/blog-images/22-01-26/862ca9dd-89dc-4d12-bd99-c85944a86666_What_Are_the_Basic_Tennis_rules__1769078532013.png",
+                      uri: "https://cdn.sportsforlife.in/shared/blog-images/22-01-26/862ca9dd-89dc-4d12-bd99-c85944a86666_What_Are_the_Basic_Tennis_rules__1769078532013.png",
                     }}
                     style={styles.image}
                   />

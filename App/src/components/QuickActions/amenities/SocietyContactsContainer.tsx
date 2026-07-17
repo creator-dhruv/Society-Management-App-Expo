@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
@@ -37,10 +37,11 @@ const CONTACTS = [
 ];
 
 export default function SocietyContactsContainer() {
+  const [contacts, setContacts] = useState(CONTACTS);
   return (
     <View style={{ paddingHorizontal: 20 }}>
       <View style={{ gap: 12, marginVertical: 20 }}>
-        {CONTACTS.map((contact) => (
+        {contacts.map((contact) => (
           <View
             key={contact.name}
             style={{
@@ -65,7 +66,11 @@ export default function SocietyContactsContainer() {
                 justifyContent: "center",
               }}
             >
-              <Ionicons name={contact.icon} size={22} color={contact.color} />
+              <Ionicons
+                name={contact.icon as any}
+                size={22}
+                color={contact.color}
+              />
             </View>
             <View style={{ flex: 1, marginHorizontal: 12 }}>
               <Text
