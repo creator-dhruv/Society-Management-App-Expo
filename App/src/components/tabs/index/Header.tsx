@@ -5,10 +5,12 @@ import useDimension from "@/hooks/dimensions";
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
 import { useRouter } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
 
 const Header = () => {
   const navigate = useRouter();
   const { width } = useDimension();
+  const { signOut } = useAuth();
   return (
     <View
       style={{
@@ -71,7 +73,7 @@ const Header = () => {
         </View>
       </Pressable>
       <Pressable
-        onPress={() => navigate.push("/(user)/(tabs)/community")}
+        onPress={() => signOut()}
         style={{
           backgroundColor: Colors.surface,
           width: 50,

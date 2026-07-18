@@ -1,12 +1,3 @@
-import { useFonts } from "expo-font";
-import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_700Bold,
-  PlusJakartaSans_800ExtraBold,
-} from "@expo-google-fonts/plus-jakarta-sans";
-
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { Tabs } from "expo-router";
 import { Pressable, Text } from "react-native";
@@ -104,17 +95,6 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
 }
 
 export default function Layout() {
-  const [fontsLoaded] = useFonts({
-    PlusJakartaSans_400Regular,
-    PlusJakartaSans_500Medium,
-    PlusJakartaSans_600SemiBold,
-    PlusJakartaSans_700Bold,
-    PlusJakartaSans_800ExtraBold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
   return (
     <Tabs
       tabBar={(props) => <CustomTabBar {...props} />}
