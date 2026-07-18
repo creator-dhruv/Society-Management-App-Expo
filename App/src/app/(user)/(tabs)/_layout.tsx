@@ -17,7 +17,7 @@ import { Fonts } from "@/constants/font";
 function CustomTabBar({ state, descriptors, navigation }: any) {
   const currentRoute = state.routes[state.index].name;
 
-  if (currentRoute === "approval") {
+  if (currentRoute !== "index") {
     return null;
   }
 
@@ -59,7 +59,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
         let iconName: any = "ellipse";
 
         if (route.name === "index") iconName = "home";
-        if (route.name === "community") iconName = "people";
+        if (route.name === "(community)") iconName = "people";
         if (route.name === "approval") iconName = "add-circle";
 
         return (
@@ -130,7 +130,7 @@ export default function Layout() {
       />
 
       <Tabs.Screen
-        name="community"
+        name="(community)"
         options={{
           title: "Community",
         }}
