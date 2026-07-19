@@ -2,14 +2,13 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import dbconnect from "./database/dbconnect.js";
+import dbconnect from "./database/dbconnect.ts";
 
 dotenv.config({
   path: "./.env",
 });
 
-const app = new express();
-const PORT = process.env.PORT;
+const app = express();
 
 const allowedOrigin = process.env.ORIGIN;
 
@@ -33,13 +32,15 @@ dbconnect()
       console.log(
         `Server is listening on http://localhost:${process.env.PORT}`,
       );
-      app.on(Error, (Error) => {
-        console.log("Mongo DB Error:", Error);
-      });
     });
   })
   .catch((Error) => {
     console.log("Mongo Connect Error:", Error);
   });
+
+// Routes Import
+import userRouter from "./routes/user.route.ts";
+
+app.use("/api/v1/user", userRouter);
 
 export { app };
