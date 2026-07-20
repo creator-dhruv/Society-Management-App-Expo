@@ -9,15 +9,13 @@ import {
   PlusJakartaSans_800ExtraBold,
 } from "@expo-google-fonts/plus-jakarta-sans";
 import * as SplashScreen from "expo-splash-screen";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-
-import { AuthProvider, useAuth } from "@/context/AuthContext";
 import Colors from "@/constants/color";
+import { useAuthStore } from "@/store/auth.store";
 
 SplashScreen.preventAutoHideAsync();
 
-function RootNavigator() {
-  const { isLoading } = useAuth();
+export default function RootLayout() {
+  const { setLoading } = useAuthStore();
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
@@ -27,12 +25,13 @@ function RootNavigator() {
   });
 
   useEffect(() => {
-    if (fontsLoaded && !isLoading) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
+      setLoading(false);
     }
-  }, [fontsLoaded, isLoading]);
+  }, [fontsLoaded]);
 
-  if (!fontsLoaded || isLoading) {
+  if (!fontsLoaded) {
     return null;
   }
 
@@ -49,15 +48,5 @@ function RootNavigator() {
       <Stack.Screen name="(admin)" />
       <Stack.Screen name="(guard)" />
     </Stack>
-  );
-}
-
-export default function RootLayout() {
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <RootNavigator />
-      </AuthProvider>
-    </GestureHandlerRootView>
   );
 }

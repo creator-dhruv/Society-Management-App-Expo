@@ -1,18 +1,14 @@
 import { Redirect } from "expo-router";
-
-import { useAuth } from "@/context/AuthContext";
 import { getDashboardRouteForRole } from "@/utils/authRoutes";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function Index() {
-  const { user, isLoading } = useAuth();
-
+  const { user, isLoading } = useAuthStore();
   if (isLoading) {
     return null;
   }
-
   if (!user) {
-    return <Redirect href="/Role" />;
+    return <Redirect href="/Login" />;
   }
-
-  return <Redirect href={getDashboardRouteForRole(user.role)} />;
+  return <Redirect href={getDashboardRouteForRole("user")} />;
 }
