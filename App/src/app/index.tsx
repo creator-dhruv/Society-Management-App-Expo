@@ -10,5 +10,5 @@ export default function Index() {
   if (!user) {
     return <Redirect href="/Login" />;
   }
-  return <Redirect href={getDashboardRouteForRole("user")} />;
+  return <Redirect href={getDashboardRouteForRole("user") as any} />;
 }
