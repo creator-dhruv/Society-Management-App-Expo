@@ -15,29 +15,31 @@ import Ionicons from "@react-native-vector-icons/ionicons";
 import { BlurView } from "expo-blur";
 
 import AuthButton from "@/components/auth/AuthButton";
-import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
-import { useAuth } from "@/context/AuthContext";
+import AuthHeader from "@/components/auth/AuthHeader";
+import AuthError from "@/components/auth/AuthError";
 
 export default function ForgotPassword() {
   const router = useRouter();
-  const { forgotPassword } = useAuth();
+  // const { forgotPassword } = useAuthStore((state) => state.fo);
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [errorString, setErrorString] = useState("");
 
   const handleReset = async () => {
     if (!email.trim()) {
-      Alert.alert("Missing email", "Please enter your registered email.");
+      setErrorString("Please enter your registered email.");
       return;
     }
 
+    setErrorString("");
+
     setLoading(true);
     try {
-      await forgotPassword(email.trim());
       setSent(true);
     } catch (error) {
       Alert.alert(
@@ -61,19 +63,17 @@ export default function ForgotPassword() {
           showsVerticalScrollIndicator={false}
         >
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.dismissTo("/(auth)/Login")}
             style={styles.backButton}
           >
             <BlurView intensity={85} tint="light" style={styles.backBlur}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color={Colors.text.primary}
+              />
             </BlurView>
           </TouchableOpacity>
-
-          <AuthHeader
-            title="Reset password"
-            subtitle="Enter your email and we will send reset instructions"
-            icon="key-outline"
-          />
 
           <View style={styles.formCard}>
             {sent ? (
@@ -88,16 +88,19 @@ export default function ForgotPassword() {
                   If an account exists for {email}, password reset instructions
                   have been sent.
                 </Text>
-                <AuthButton
-                  title="Back to Sign In"
-                  onPress={() => router.replace("/Login")}
-                  style={styles.backToLogin}
-                />
+                <View style={{ marginTop: 20 }}>
+                  <AuthButton
+                    title="Back to Sign In"
+                    onPress={() => router.replace("/Login")}
+                    style={styles.backToLogin}
+                  />
+                </View>
               </View>
             ) : (
               <>
+                <AuthHeader screen="forgotPassword" />
                 <AuthInput
-                  label="Email"
+                  label="Email Address"
                   icon="mail-outline"
                   placeholder="you@example.com"
                   keyboardType="email-address"
@@ -106,12 +109,14 @@ export default function ForgotPassword() {
                   value={email}
                   onChangeText={setEmail}
                 />
-
-                <AuthButton
-                  title="Send Reset Link"
-                  loading={loading}
-                  onPress={handleReset}
-                />
+                <View style={{ marginTop: 20 }}>
+                  {errorString && <AuthError error={errorString} />}
+                  <AuthButton
+                    title="Send Reset Link"
+                    loading={loading}
+                    onPress={handleReset}
+                  />
+                </View>
               </>
             )}
           </View>
@@ -124,12 +129,15 @@ export default function ForgotPassword() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.surface,
   },
   flex: {
     flex: 1,
   },
   scrollContent: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
     paddingBottom: 40,
   },
@@ -149,12 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff60",
   },
   formCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: Colors.radius.lg,
     padding: 20,
-    borderWidth: 1,
-    borderColor: Colors.divider,
-    ...Colors.shadowStyle.card,
   },
   successBox: {
     alignItems: "center",

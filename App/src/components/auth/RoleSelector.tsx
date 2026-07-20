@@ -1,5 +1,11 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
 import Colors from "@/constants/color";
@@ -9,7 +15,7 @@ import { ROLE_LABELS } from "@/utils/authRoutes";
 
 const ROLE_OPTIONS: {
   role: UserRole;
-  icon: keyof typeof Ionicons.glyphMap;
+  icon: any;
   description: string;
 }[] = [
   {
@@ -23,7 +29,7 @@ const ROLE_OPTIONS: {
     description: "Manage society operations",
   },
   {
-    role: "guard",
+    role: "security",
     icon: "key-outline",
     description: "Verify visitors at the gate",
   },
@@ -35,8 +41,9 @@ interface RoleSelectorProps {
 }
 
 export default function RoleSelector({ value, onChange }: RoleSelectorProps) {
+  const { width } = useWindowDimensions();
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { width: width * 0.85 }]}>
       <View style={styles.list}>
         {ROLE_OPTIONS.map((option) => {
           const selected = value === option.role;
@@ -86,16 +93,10 @@ export default function RoleSelector({ value, onChange }: RoleSelectorProps) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: Colors.spacing.lg,
-  },
-  label: {
-    fontFamily: Fonts.medium,
-    fontSize: FontSize.sm,
-    color: Colors.text.secondary,
-    marginBottom: Colors.spacing.sm,
+    marginBottom: 48,
   },
   list: {
-    gap: Colors.spacing.sm,
+    gap: 16,
   },
   card: {
     flexDirection: "row",
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: Fonts.semibold,
-    fontSize: FontSize.sm,
+    fontSize: FontSize.md,
     color: Colors.text.primary,
   },
   titleSelected: {

@@ -1,18 +1,13 @@
 import { Redirect, Stack } from "expo-router";
-
-import { useAuth } from "@/context/AuthContext";
+import { useAuthStore } from "@/store/auth.store";
 import { getDashboardRouteForRole } from "@/utils/authRoutes";
 
 export default function AuthLayout() {
-  const { user, isLoading } = useAuth();
+  const user = useAuthStore((state) => state.user);
 
-  if (isLoading) {
-    return null;
+  if (user) {
+    return <Redirect href={getDashboardRouteForRole(user.role)} />;
   }
-
-  //   if (user) {
-  //     return <Redirect href={getDashboardRouteForRole(user.role)} />;
-  //   }
 
   return (
     <Stack
@@ -25,6 +20,7 @@ export default function AuthLayout() {
       <Stack.Screen name="Login" />
       <Stack.Screen name="Signup" />
       <Stack.Screen name="ForgotPassword" />
+      <Stack.Screen name="OTP" />
     </Stack>
   );
 }

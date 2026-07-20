@@ -13,86 +13,91 @@ import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import AuthButton from "@/components/auth/AuthButton";
-import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
-import RoleSelector from "@/components/auth/RoleSelector";
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
-import { useAuth } from "@/context/AuthContext";
 import type { UserRole } from "@/types/auth";
 import { getDashboardRouteForRole } from "@/utils/authRoutes";
+import { useAuthStore } from "@/store/auth.store";
+import { authService } from "@/services/auth.services";
+import { saveAuthSession } from "@/services/storage";
+import AuthHeader from "@/components/auth/AuthHeader";
+import AuthError from "@/components/auth/AuthError";
 
 export default function Signup() {
   const router = useRouter();
-  const { signUp } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [flatNo, setFlatNo] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("user");
+  const [error, setError] = useState<Record<string, string>>({});
+  const [errorString, setErrorString] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const handleReset = () => {
+    setName("");
+    setEmail("");
+    setError({});
+    setErrorString("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+  const { role, setEmailAddress } = useAuthStore();
   const handleSignup = async () => {
     if (!name.trim() || !email.trim() || !password.trim()) {
-      Alert.alert("Missing details", "Please fill in all required fields.");
+      setErrorString("Please fill in all required fields.");
       return;
     }
 
     setLoading(true);
+    setError({});
+    setErrorString("");
+
     try {
-      await signUp({
+      await authService.register({
         name,
         email,
-        phone,
-        flatNo,
         password,
         confirmPassword,
         role,
       });
-      router.replace(getDashboardRouteForRole(role));
-    } catch (error) {
-      Alert.alert(
-        "Signup failed",
-        error instanceof Error ? error.message : "Unable to create account.",
-      );
+      setEmailAddress(email);
+      handleReset();
+      router.push("/(auth)/OTP");
+    } catch (error: any) {
+      if (error.response) {
+        typeof error?.response?.data?.message == "object"
+          ? setError(error?.response?.data?.message)
+          : setErrorString(error?.response?.data?.message);
+      } else {
+        console.error("Error Message:", error.message);
+      }
     } finally {
       setLoading(false);
     }
   };
-
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
+      <KeyboardAvoidingView style={styles.flex} behavior={"padding"}>
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <AuthHeader
-            title="Join your society"
-            subtitle="Create an account for smooth guest approvals and community access"
-            icon="person-add-outline"
-          />
-
           <View style={styles.formCard}>
-            <RoleSelector value={role} onChange={setRole} />
-
+            <AuthHeader screen="signup" />
             <AuthInput
               label="Full name"
               icon="person-outline"
               placeholder="Your full name"
               value={name}
               onChangeText={setName}
+              error={error.name}
             />
 
             <AuthInput
-              label="Email"
+              label="Email Address"
               icon="mail-outline"
               placeholder="you@example.com"
               keyboardType="email-address"
@@ -100,27 +105,8 @@ export default function Signup() {
               autoCorrect={false}
               value={email}
               onChangeText={setEmail}
+              error={error.email}
             />
-
-            <AuthInput
-              label="Phone (optional)"
-              icon="call-outline"
-              placeholder="10-digit mobile number"
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
-
-            {role === "user" ? (
-              <AuthInput
-                label="Flat number"
-                icon="home-outline"
-                placeholder="e.g. A-1204"
-                autoCapitalize="characters"
-                value={flatNo}
-                onChangeText={setFlatNo}
-              />
-            ) : null}
 
             <AuthInput
               label="Password"
@@ -129,6 +115,7 @@ export default function Signup() {
               secureTextEntry
               value={password}
               onChangeText={setPassword}
+              error={error.password}
             />
 
             <AuthInput
@@ -138,21 +125,28 @@ export default function Signup() {
               secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
+              error={error.confirmPassword}
             />
 
-            <AuthButton
-              title="Create Account"
-              loading={loading}
-              onPress={handleSignup}
-            />
+            <View style={{ marginTop: 20 }}>
+              {errorString && <AuthError error={errorString} />}
+              <AuthButton
+                title="Create Account"
+                loading={loading}
+                onPress={handleSignup}
+              />
+            </View>
 
             <View style={styles.footer}>
               <Text style={styles.footerText}>Already have an account?</Text>
-              <Link href="/Login" asChild>
-                <TouchableOpacity>
-                  <Text style={styles.footerLink}>Sign in</Text>
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity
+                onPress={() => {
+                  router.dismissTo("/(auth)/Login");
+                  handleReset();
+                }}
+              >
+                <Text style={styles.footerLink}>Sign in</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -164,27 +158,28 @@ export default function Signup() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.surface,
+    width: "100%",
   },
   flex: {
     flex: 1,
   },
   scrollContent: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
     padding: 20,
     paddingBottom: 40,
   },
   formCard: {
-    backgroundColor: Colors.surface,
-    borderRadius: Colors.radius.lg,
     padding: 20,
-    borderWidth: 1,
-    borderColor: Colors.divider,
-    ...Colors.shadowStyle.card,
   },
   footer: {
-    marginTop: Colors.spacing.xl,
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
-    gap: Colors.spacing.xs,
+    gap: 6,
   },
   footerText: {
     fontFamily: Fonts.regular,

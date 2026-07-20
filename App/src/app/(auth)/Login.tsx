@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -7,46 +7,73 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import AuthButton from "@/components/auth/AuthButton";
-import AuthHeader from "@/components/auth/AuthHeader";
 import AuthInput from "@/components/auth/AuthInput";
-import RoleSelector from "@/components/auth/RoleSelector";
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
-import { useAuth } from "@/context/AuthContext";
+// import { useAuth } from "@/context/AuthContext";
 import type { UserRole } from "@/types/auth";
 import { getDashboardRouteForRole } from "@/utils/authRoutes";
+import { useAuthStore } from "@/store/auth.store";
+import { authService } from "@/services/auth.services";
+import { saveAuthSession } from "@/services/storage";
+import AuthHeader from "@/components/auth/AuthHeader";
+import AuthError from "@/components/auth/AuthError";
 
 export default function Login() {
   const router = useRouter();
-  const { signIn } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("user");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<Record<string, string>>({});
+  const [errorString, setErrorString] = useState("");
+  const { width } = useWindowDimensions();
+  const { login, user } = useAuthStore();
+
+  const handleReset = () => {
+    setEmail("");
+    setError({});
+    setErrorString("");
+    setPassword("");
+  };
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      Alert.alert("Missing details", "Please enter your email and password.");
-      return;
-    }
-
-    setLoading(true);
     try {
-      await signIn({ email: email.trim(), password, role });
-      router.replace(getDashboardRouteForRole(role));
-    } catch (error) {
-      Alert.alert(
-        "Login failed",
-        error instanceof Error ? error.message : "Unable to sign in.",
-      );
+      if (!email.trim() || !password.trim()) {
+        setErrorString("Please fill all required fields.");
+        return;
+      }
+      setLoading(true);
+      setError({});
+      setErrorString("");
+
+      const { data } = await authService.login({
+        email: email,
+        password: String(password),
+      });
+
+      // Save tokens
+      await saveAuthSession({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken,
+      });
+
+      // Update Zustand
+      login(data.user, data.accessToken, data.refreshToken);
+
+      // Navigate based on actual user role
+      router.replace(getDashboardRouteForRole(data.user.role) as any);
+    } catch (error: any) {
+      typeof error?.response?.data?.message == "object"
+        ? setError(error?.response?.data?.message)
+        : setErrorString(error?.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -54,18 +81,17 @@ export default function Login() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
+      <KeyboardAvoidingView style={styles.flex} behavior={"padding"}>
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          {/* <AuthHeader title="Welcome back!" subtitle="Login to get access" /> */}
+          <AuthHeader screen="login" />
           <View style={styles.formCard}>
             <AuthInput
-              label="Email"
+              label="Email Address"
               icon="mail-outline"
               placeholder="you@example.com"
               keyboardType="email-address"
@@ -73,52 +99,43 @@ export default function Login() {
               autoCorrect={false}
               value={email}
               onChangeText={setEmail}
+              error={error.email}
             />
 
             <AuthInput
               label="Password"
               icon="lock-closed-outline"
+              secureTextEntry={true}
               placeholder="Enter your password"
-              secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
+              error={error.password}
             />
 
             <TouchableOpacity
-              onPress={() => setShowPassword((prev) => !prev)}
-              style={styles.togglePassword}
+              style={styles.forgotLink}
+              onPress={() => {
+                router.dismissTo("/(auth)/ForgotPassword");
+                handleReset();
+              }}
             >
-              <Text style={styles.togglePasswordText}>
-                {showPassword ? "Hide password" : "Show password"}
-              </Text>
+              <Text style={styles.forgotText}>Forgot password?</Text>
             </TouchableOpacity>
 
-            <Link href="/ForgotPassword" asChild>
-              <TouchableOpacity style={styles.forgotLink}>
-                <Text style={styles.forgotText}>Forgot password?</Text>
-              </TouchableOpacity>
-            </Link>
+            {errorString && <AuthError error={errorString} />}
 
-            <AuthButton
-              title="Sign In"
-              loading={loading}
-              onPress={handleLogin}
-            />
+            <AuthButton title="Login" loading={loading} onPress={handleLogin} />
 
             <View style={styles.footer}>
               <Text style={styles.footerText}>New to the society app?</Text>
-              <Link href="/Signup" asChild>
-                <TouchableOpacity>
-                  <Text style={styles.footerLink}>Create an account</Text>
-                </TouchableOpacity>
-              </Link>
-            </View>
-
-            <View style={styles.demoBox}>
-              <Text style={styles.demoTitle}>Demo accounts</Text>
-              <Text style={styles.demoText}>user@demo.com / demo123</Text>
-              <Text style={styles.demoText}>admin@demo.com / demo123</Text>
-              <Text style={styles.demoText}>guard@demo.com / demo123</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/(auth)/Role");
+                  handleReset();
+                }}
+              >
+                <Text style={styles.footerLink}>Create an account</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -136,11 +153,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
-    paddingBottom: 40,
   },
   formCard: {
     padding: 20,
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   togglePassword: {
     alignSelf: "flex-end",
@@ -162,9 +185,11 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   footer: {
-    marginTop: Colors.spacing.xl,
+    flexDirection: "row",
+    alignSelf: "center",
+    marginTop: 20,
     alignItems: "center",
-    gap: Colors.spacing.xs,
+    gap: 6,
   },
   footerText: {
     fontFamily: Fonts.regular,
@@ -175,25 +200,5 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.bold,
     fontSize: FontSize.sm,
     color: Colors.primary,
-  },
-  demoBox: {
-    marginTop: Colors.spacing.xl,
-    padding: Colors.spacing.lg,
-    borderRadius: Colors.radius.md,
-    backgroundColor: Colors.surfaceTertiary,
-    borderWidth: 1,
-    borderColor: Colors.divider,
-  },
-  demoTitle: {
-    fontFamily: Fonts.semibold,
-    fontSize: FontSize.sm,
-    color: Colors.text.primary,
-    marginBottom: Colors.spacing.sm,
-  },
-  demoText: {
-    fontFamily: Fonts.regular,
-    fontSize: FontSize.xs,
-    color: Colors.text.tertiary,
-    marginTop: 2,
   },
 });

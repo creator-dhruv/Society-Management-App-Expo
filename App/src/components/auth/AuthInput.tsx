@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TextInputProps,
+  useWindowDimensions,
   View,
 } from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
@@ -25,9 +26,10 @@ export default function AuthInput({
   ...props
 }: AuthInputProps) {
   const [focused, setFocused] = useState(false);
+  const { width } = useWindowDimensions();
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { width: width * 0.85 }]}>
       <Text style={styles.label}>{label}</Text>
 
       <View
@@ -62,14 +64,14 @@ export default function AuthInput({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: 20,
+    marginBottom: 12,
   },
 
   label: {
     marginBottom: Colors.spacing.sm,
-    fontFamily: Fonts.medium,
+    fontFamily: Fonts.semibold,
     fontSize: FontSize.sm,
-    color: Colors.text.secondary,
+    color: Colors.text.primary,
   },
 
   inputContainer: {

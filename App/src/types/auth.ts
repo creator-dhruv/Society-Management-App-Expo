@@ -1,18 +1,29 @@
-export type UserRole = "user" | "admin" | "guard";
+export type UserRole = "user" | "admin" | "security";
+
+export interface Society {
+  name: string;
+  address: {
+    flatNo?: string;
+    towerNo: string;
+  };
+}
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
+  avatar: string[];
   role: UserRole;
-  flatNo?: string;
-  societyId: string;
-  phone?: string;
+  society: Society[];
+  isVerified: boolean;
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AuthSession {
-  token: string;
-  user: User;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export interface LoginCredentials {
@@ -27,10 +38,4 @@ export interface SignupCredentials {
   password: string;
   confirmPassword: string;
   role: UserRole;
-  flatNo?: string;
-  phone?: string;
-}
-
-export interface StoredUserRecord extends User {
-  password: string;
 }
