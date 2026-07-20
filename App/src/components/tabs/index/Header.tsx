@@ -5,12 +5,38 @@ import useDimension from "@/hooks/dimensions";
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
 import { useRouter } from "expo-router";
-import { useAuth } from "@/context/AuthContext";
+import { authService } from "@/services/auth.services";
+import { clearAuthSession, getAuthSession } from "@/services/storage";
+import { useAuthStore } from "@/store/auth.store";
 
 const Header = () => {
   const navigate = useRouter();
   const { width } = useDimension();
-  const { signOut } = useAuth();
+  const { logout } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      const keys = await getAuthSession();
+
+      if (keys) {
+        console.log(keys.accessToken);
+        try {
+          await authService.logout(keys);
+        } catch (apiErr: any) {
+          console.warn(
+            "Backend logout failed:",
+            apiErr?.response?.data?.message || apiErr.message,
+          );
+        }
+      }
+    } catch (err) {
+      console.error("Error reading session during logout:", err);
+    } finally {
+      await clearAuthSession();
+      logout();
+      navigate.replace("/(auth)/Login");
+    }
+  };
   return (
     <View
       style={{
@@ -73,7 +99,7 @@ const Header = () => {
         </View>
       </Pressable>
       <Pressable
-        onPress={() => signOut()}
+        onPress={handleLogout}
         style={{
           backgroundColor: Colors.surface,
           width: 50,
