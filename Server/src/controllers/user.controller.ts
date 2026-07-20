@@ -7,7 +7,7 @@ import { createOtp, verifyOtp } from "../utils/Otp.ts";
 
 // Helper to clean up Zod formatting clutter
 const formatZodErrors = (error: any) => {
-  return error.issues.reduce(
+  return error?.issues.reduce(
     (acc: Record<string, string>, err: any) => {
       const key = err.path.join(".");
       acc[key] = err.message;
@@ -26,15 +26,37 @@ const signUp = async (req: Request, res: Response) => {
     }
 
     const body = result.data;
+    if (body.password !== body.confirmPassword) {
+      return ApiResponse(res, 400, "Confirm Password is incorrect", false);
+    }
 
-    const existingUser = await User.findOne({ email: body.email });
+    const existingUser = await User.findOne({
+      email: body.email,
+    });
+
     if (existingUser) {
-      return ApiResponse(
-        res,
-        409,
-        "User already exists with this email address",
-        false,
-      );
+      if (existingUser?.isVerified) {
+        return ApiResponse(
+          res,
+          409,
+          "User already exists with this email address",
+          false,
+        );
+      }
+
+      if (!existingUser?.isVerified) {
+        const response = await createOtp(body.email);
+        if (!response.success) {
+          return ApiResponse(
+            res,
+            response.status || 500,
+            response.message,
+            false,
+          );
+        }
+
+        return ApiResponse(res, 201, "User created successfully", true);
+      }
     }
 
     const user = await User.create({
@@ -60,12 +82,7 @@ const signUp = async (req: Request, res: Response) => {
       return ApiResponse(res, response.status || 500, response.message, false);
     }
 
-    return ApiResponse(
-      res,
-      201,
-      "User created successfully. Verification OTP sent.",
-      true,
-    );
+    return ApiResponse(res, 201, "User created successfully", true);
   } catch (crashError: any) {
     console.error("Signup System Error:", crashError);
     return ApiResponse(
@@ -94,20 +111,31 @@ const emailVerification = async (req: Request, res: Response) => {
 
     const updatedUser = await User.findOneAndUpdate(
       { email: body.email },
-      { isVerified: true },
-      { new: true },
+      { $set: { isVerified: true } },
+      { returnDocument: "after" },
     );
 
     if (!updatedUser) {
-      return ApiResponse(
-        res,
-        404,
-        "Associated user profile could not be located",
-        false,
-      );
+      return ApiResponse(res, 404, "User not found", false);
     }
 
-    return ApiResponse(res, 200, "Email account verified successfully", true);
+    const accessToken = updatedUser.generateAccessToken();
+    const refreshToken = updatedUser.generateRefreshToken();
+
+    if (!updatedUser.refreshToken) {
+      updatedUser.refreshToken = [];
+    }
+    if (updatedUser.refreshToken.length > 5) {
+      updatedUser.refreshToken.shift();
+    }
+    updatedUser.refreshToken.push(refreshToken);
+    await updatedUser.save({ validateBeforeSave: false });
+
+    return ApiResponse(res, 200, "Email verified successfully", true, {
+      user: updatedUser,
+      refreshToken,
+      accessToken,
+    });
   } catch (error: any) {
     console.error("Verification System Error:", error);
     return ApiResponse(
@@ -130,6 +158,7 @@ const signIn = async (req: Request, res: Response) => {
     const { email, password } = result.data;
 
     const user = await User.findOne({ email });
+
     if (!user) {
       return ApiResponse(res, 401, "Invalid email or password", false);
     }
@@ -138,7 +167,7 @@ const signIn = async (req: Request, res: Response) => {
       return ApiResponse(
         res,
         403,
-        "Please verify your email address before logging in",
+        "Please verify your email address before login",
         false,
       );
     }
@@ -154,26 +183,17 @@ const signIn = async (req: Request, res: Response) => {
     if (!user.refreshToken) {
       user.refreshToken = [];
     }
+    if (user.refreshToken.length > 5) {
+      user.refreshToken.shift();
+    }
     user.refreshToken.push(refreshToken);
     await user.save({ validateBeforeSave: false });
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict" as const,
-    };
-
-    res.cookie("accessToken", accessToken, {
-      ...cookieOptions,
-      maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days matching JWT expiry
+    return ApiResponse(res, 200, "Logged in successfully", true, {
+      user,
+      refreshToken,
+      accessToken,
     });
-
-    res.cookie("refreshToken", refreshToken, {
-      ...cookieOptions,
-      maxAge: 60 * 24 * 60 * 60 * 1000, // 60 days matching JWT expiry
-    });
-
-    return ApiResponse(res, 200, "Logged in successfully", true);
   } catch (error: any) {
     console.error("Login System Error:", error);
     return ApiResponse(
@@ -187,10 +207,10 @@ const signIn = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+    const userId = req.user?.id;
+
+    await User.findByIdAndUpdate(userId, {
+      refreshToken: [],
     });
 
     return ApiResponse(res, 200, "Logged out successfully", true);

@@ -53,6 +53,17 @@ export const userSignUpSchema = z.object({
     .trim()
     .min(6, { error: "Password must be at least 6 characters" }),
 
+  confirmPassword: z
+    .string({
+      error: (issue) =>
+        issue.input === undefined
+          ? "Password is required"
+          : "Invalid text format",
+    })
+    .trim()
+    .min(6, { error: "Password must be at least 6 characters" })
+    .optional(),
+
   avatar: z
     .array(z.string().url({ error: "Invalid avatar URL format" }))
     .min(1, { error: "At least one avatar image is required" })
@@ -70,7 +81,7 @@ export const userSignInSchema = z.object({
   email: z
     .string({
       error: (issue) =>
-        issue.input === undefined ? "Email is required" : "Invalid text format",
+        issue.input === "" ? "Email is required" : "Invalid text format",
     })
     .trim()
     .email({ error: "Invalid email address format" }),
