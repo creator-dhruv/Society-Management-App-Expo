@@ -63,7 +63,7 @@ export const verifyOtp = async (email: string, clientOtp: string) => {
       return { success: false, message: "OTP has expired", status: 400 };
     }
 
-    if (latestOtpRecord.otp !== clientOtp) {
+    if (latestOtpRecord.otp != clientOtp) {
       return { success: false, message: "Invalid OTP code", status: 401 };
     }
 
