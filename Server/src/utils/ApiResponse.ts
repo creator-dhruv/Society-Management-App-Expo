@@ -5,9 +5,11 @@ export const ApiResponse = (
   status: number,
   message: any,
   success: boolean,
+  data?: {},
 ) => {
   return res.status(status).json({
     message,
     success,
+    data,
   });
 };
