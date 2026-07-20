@@ -1,5 +1,5 @@
 import { api } from "@/utils/axios";
-import { User, UserRole } from "@/types/auth";
+import { AuthSession, User, UserRole } from "@/types/auth";
 
 export interface LoginBody {
   email: string;
@@ -65,10 +65,12 @@ export const authService = {
     return response;
   },
 
-  logout: async () => {
-    const { data } = await api.get("/user/logout");
+  logout: async (token: AuthSession) => {
+    const { data: response } = await api.post("/user/logout", {
+      accessToken: token.accessToken,
+    });
 
-    return data;
+    return response;
   },
 
   getCurrentUser: async (): Promise<User> => {

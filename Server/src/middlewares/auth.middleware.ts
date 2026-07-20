@@ -32,7 +32,7 @@ export const authenticate = (
 
     const decoded = jwt.verify(
       accessToken,
-      process.env.JWT_SECRET!,
+      process.env.ACCESS_TOKEN_SECRET!,
     ) as JwtPayload;
 
     req.user = decoded;

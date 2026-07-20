@@ -12,6 +12,6 @@ const router = Router();
 router.route("/signUp").post(signUp);
 router.route("/emailVerification").post(emailVerification);
 router.route("/signIn").post(signIn);
-router.route("/logout").get(authenticate, logout);
+router.route("/logout").post(authenticate, logout);
 
 export default router;
