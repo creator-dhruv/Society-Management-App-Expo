@@ -6,12 +6,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
+import Button from "@/components/common/Button";
 
 const HOUSE_HELP = [
   {
@@ -38,6 +40,7 @@ const HOUSE_HELP = [
 ];
 
 export default function HouseHelpContactsContainer() {
+  const { width } = useWindowDimensions();
   return (
     <View style={{ marginVertical: 24 }}>
       <View
@@ -82,10 +85,10 @@ export default function HouseHelpContactsContainer() {
         renderItem={({ item }) => (
           <View
             style={{
-              width: 178,
+              width: width * 0.5,
               alignItems: "center",
               padding: 16,
-              borderRadius: 16,
+              borderRadius: 30,
               backgroundColor: Colors.surface,
               borderWidth: 1,
               borderColor: Colors.divider,
@@ -141,32 +144,22 @@ export default function HouseHelpContactsContainer() {
             >
               {item.role}
             </Text>
-            <TouchableOpacity
-              accessibilityRole="button"
-              accessibilityLabel={`Call ${item.name}`}
-              onPress={() => Linking.openURL(`tel:${item.phone}`)}
+            <View
               style={{
-                flexDirection: "row",
+                flexDirection: "column",
+                justifyContent: "center",
                 alignItems: "center",
-                gap: 8,
-                marginTop: 16,
-                paddingVertical: 9,
-                paddingHorizontal: 20,
-                borderRadius: 20,
-                backgroundColor: Colors.primaryDark,
+                marginTop: 15,
               }}
             >
-              <Ionicons name="call" size={16} color={Colors.white} />
-              <Text
-                style={{
-                  color: Colors.white,
-                  fontFamily: Fonts.semibold,
-                  fontSize: FontSize.sm,
-                }}
-              >
-                Call now
-              </Text>
-            </TouchableOpacity>
+              <Button
+                title="Call now"
+                icon="call"
+                direction="left"
+                w={0.4}
+                marginVertical={0}
+              />
+            </View>
           </View>
         )}
       />

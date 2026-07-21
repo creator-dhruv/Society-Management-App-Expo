@@ -1,9 +1,16 @@
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import Colors from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
+import Button from "@/components/common/Button";
 
 const STATUS_CONFIG = {
   Upcoming: {
@@ -25,6 +32,7 @@ const STATUS_CONFIG = {
 
 const VisitorHistoryTicketCard = ({ item }: { item: any }) => {
   const statusStyle = STATUS_CONFIG[item.status] ?? STATUS_CONFIG.Upcoming;
+  const { width } = useWindowDimensions();
   return (
     <View style={styles.container}>
       {/* Top Ticket */}
@@ -94,7 +102,7 @@ const VisitorHistoryTicketCard = ({ item }: { item: any }) => {
         </View>
 
         {/* Botton */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           accessibilityRole="button"
           //   onPress={() => Linking.openURL(`tel:${item.phone}`)}
           style={{
@@ -125,7 +133,20 @@ const VisitorHistoryTicketCard = ({ item }: { item: any }) => {
           >
             View Details
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            title="View Details"
+            icon="arrow-up-right-box-outline"
+            direction="left"
+          />
+        </View>
       </LinearGradient>
     </View>
   );
