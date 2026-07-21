@@ -5,8 +5,14 @@ import UpcomingEventsContainer from "@/components/tabs/index/UpcomingEventsConta
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Colors from "@/constants/color";
+import { useAuthStore } from "@/store/auth.store";
+import { useEffect } from "react";
 
 export default function Index() {
+  const { user } = useAuthStore();
+  // useEffect(() => {
+  //   console.log(user);
+  // }, []);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>

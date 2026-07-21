@@ -16,6 +16,8 @@ import Animated, {
   FadeOut,
   Layout,
 } from "react-native-reanimated";
+import Button from "@/components/common/Button";
+import EmptyStateContainer from "@/components/common/EmptyStateContainer";
 
 const ApprovalCard = ({ data, onDismiss }: any) => {
   const { width } = useDimension();
@@ -307,7 +309,9 @@ const ApprovalCardStack = () => {
   };
 
   const containerHeight =
-    CARD_HEIGHT + STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2);
+    (cards.length !== 0 &&
+      CARD_HEIGHT + STACK_OFFSET * (Math.min(cards.length, MAX_VISIBLE) - 2)) ||
+    "auto";
 
   return (
     <View
@@ -319,29 +323,37 @@ const ApprovalCardStack = () => {
         },
       ]}
     >
-      {cards.slice(0, MAX_VISIBLE).map((card, index) => {
-        const scale = 1 - index * 0.04;
-        const translateY = index * STACK_OFFSET;
+      {cards.length === 0 ? (
+        <EmptyStateContainer
+          title="No More Approvals"
+          subTitle="There are no visitor, delivery or staff approvals waiting right now."
+          buttonTitle="Live monitoring enabled"
+        />
+      ) : (
+        cards.slice(0, MAX_VISIBLE).map((card, index) => {
+          const scale = 1 - index * 0.04;
+          const translateY = index * STACK_OFFSET;
 
-        return (
-          <Animated.View
-            key={card.id}
-            entering={FadeIn.duration(250)}
-            exiting={FadeOut.duration(250)}
-            layout={Layout.springify()}
-            style={[
-              stackStyles.cardWrapper,
-              {
-                top: translateY,
-                zIndex: MAX_VISIBLE - index,
-                transform: [{ scale }],
-              },
-            ]}
-          >
-            <ApprovalCard data={card} onDismiss={() => removeCard(card.id)} />
-          </Animated.View>
-        );
-      })}
+          return (
+            <Animated.View
+              key={card.id}
+              entering={FadeIn.duration(250)}
+              exiting={FadeOut.duration(250)}
+              layout={Layout.springify()}
+              style={[
+                stackStyles.cardWrapper,
+                {
+                  top: translateY,
+                  zIndex: MAX_VISIBLE - index,
+                  transform: [{ scale }],
+                },
+              ]}
+            >
+              <ApprovalCard data={card} onDismiss={() => removeCard(card.id)} />
+            </Animated.View>
+          );
+        })
+      )}
     </View>
   );
 };

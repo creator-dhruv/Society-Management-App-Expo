@@ -84,26 +84,6 @@ export default function QuickActionContainer() {
               },
             ]}
           >
-            <View
-              pointerEvents="none"
-              style={[
-                styles.backLayerOne,
-                {
-                  backgroundColor: item.theme.color + "32",
-                },
-              ]}
-            />
-
-            <View
-              pointerEvents="none"
-              style={[
-                styles.backLayerTwo,
-                {
-                  backgroundColor: item.theme.color + "18",
-                },
-              ]}
-            />
-
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={item.title}

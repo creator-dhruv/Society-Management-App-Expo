@@ -12,6 +12,7 @@ import Ionicons from "@react-native-vector-icons/ionicons";
 
 import Color from "@/constants/color";
 import { Fonts, FontSize } from "@/constants/font";
+import EmptyStateContainer from "@/components/common/EmptyStateContainer";
 
 const UpcomingEvents = [
   {
@@ -340,16 +341,25 @@ const UpcomingEventsContainer = () => {
       </View>
 
       <FlatList
-        data={UpcomingEvents}
+        data={[]}
         horizontal
         showsHorizontalScrollIndicator={false}
         // contentContainerStyle={styles.listContent}
-        keyExtractor={(item) => item.id}
+        ListEmptyComponent={
+          <EmptyStateContainer
+            title="No Upcoming Events"
+            subTitle="No community events are scheduled right now."
+            buttonTitle="We'll notify you"
+          />
+        }
+        keyExtractor={(item: any) => item?.id}
         renderItem={({ item }) => <EventCard event={item} onPress={() => {}} />}
       />
     </View>
   );
 };
+
+export default UpcomingEventsContainer;
 
 const styles = StyleSheet.create({
   card: {
@@ -516,5 +526,3 @@ const style = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
-
-export default UpcomingEventsContainer;

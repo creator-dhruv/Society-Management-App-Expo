@@ -10,33 +10,8 @@ import { clearAuthSession, getAuthSession } from "@/services/storage";
 import { useAuthStore } from "@/store/auth.store";
 
 const Header = () => {
-  const navigate = useRouter();
+  const router = useRouter();
   const { width } = useDimension();
-  const { logout } = useAuthStore();
-
-  const handleLogout = async () => {
-    try {
-      const keys = await getAuthSession();
-
-      if (keys) {
-        console.log(keys.accessToken);
-        try {
-          await authService.logout(keys);
-        } catch (apiErr: any) {
-          console.warn(
-            "Backend logout failed:",
-            apiErr?.response?.data?.message || apiErr.message,
-          );
-        }
-      }
-    } catch (err) {
-      console.error("Error reading session during logout:", err);
-    } finally {
-      await clearAuthSession();
-      logout();
-      navigate.replace("/(auth)/Login");
-    }
-  };
   return (
     <View
       style={{
@@ -99,7 +74,7 @@ const Header = () => {
         </View>
       </Pressable>
       <Pressable
-        onPress={handleLogout}
+        onPress={() => router.navigate("/(profile)/Profile")}
         style={{
           backgroundColor: Colors.surface,
           width: 50,
