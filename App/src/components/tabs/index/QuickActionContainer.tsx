@@ -13,13 +13,13 @@ const QUICK_ACTIONS = [
     title: "Manage Visitors",
     icon: "person",
     theme: Colors.quickAction.visitors,
-    onPress: "/visitors",
+    onPress: "/(user)/(tabs)/visitors",
   },
   {
     title: "Book Amenities",
     icon: "fitness",
     theme: Colors.quickAction.amenities,
-    onPress: "/amenities",
+    onPress: "/(user)/(QuickActions)/amenities",
   },
   {
     title: "Notice Board",
@@ -42,7 +42,7 @@ const QUICK_ACTIONS = [
     title: "Raise Complaint",
     icon: "warning",
     theme: Colors.quickAction.complaints,
-    onPress: "/complaint",
+    onPress: "/(user)/(tabs)/complaints",
   },
 ];
 

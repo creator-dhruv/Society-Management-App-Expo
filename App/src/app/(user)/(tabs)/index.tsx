@@ -46,6 +46,6 @@ const styles = StyleSheet.create({
   eventsSurface: {
     marginTop: 12,
     paddingTop: 20,
-    paddingBottom: 120,
+    paddingBottom: 100,
   },
 });
