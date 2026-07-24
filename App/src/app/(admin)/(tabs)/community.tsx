@@ -1,14 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Redirect } from "expo-router";
 import React from "react";
 
-const community = () => {
-  return (
-    <View>
-      <Text>community</Text>
-    </View>
-  );
+const Community = () => {
+  return <Redirect href={"/(group)/chats" as any} />;
 };
 
-export default community;
-
-const styles = StyleSheet.create({});
+export default Community;

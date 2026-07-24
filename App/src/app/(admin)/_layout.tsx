@@ -1,10 +1,9 @@
 import { Redirect, Stack } from "expo-router";
-
-import { useAuth } from "@/context/AuthContext";
 import { getDashboardRouteForRole } from "@/utils/authRoutes";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function AdminLayout() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useAuthStore();
 
   if (isLoading) {
     return null;
@@ -15,7 +14,7 @@ export default function AdminLayout() {
   }
 
   if (user.role !== "admin") {
-    return <Redirect href={getDashboardRouteForRole(user.role)} />;
+    return <Redirect href={getDashboardRouteForRole(user.role) as any} />;
   }
 
   return (
