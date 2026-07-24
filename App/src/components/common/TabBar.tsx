@@ -11,24 +11,36 @@ import Colors from "@/constants/color";
 import { Fonts } from "@/constants/font";
 import { BlurView } from "expo-blur";
 
-const TabBar = ({ state, descriptors, navigation }: any) => {
-  const { bottom } = useSafeAreaInsets();
+const TabBar = ({
+  state,
+  descriptors,
+  navigation,
+  position = "bottom",
+  isWidthFull = false,
+  absolute = true,
+}: any) => {
+  const { top, bottom } = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   return (
     <View
       style={[
         styles.wrapper,
-        {
-          bottom: Math.max(bottom, 20),
-          width: width * 0.22 * state.routes.length,
+        absolute && {
+          position: "absolute",
         },
+        position !== "top" && {
+          bottom: Math.max(bottom, 16),
+        },
+        !isWidthFull
+          ? { width: width * 0.22 * state.routes.length }
+          : { width: width * 0.78 },
       ]}
     >
       <BlurView
         intensity={100}
         tint="light"
-        blurMethod="dimezisBlurView"
+        // blurMethod="dimezisBlurView"
         style={styles.blur}
       >
         {state.routes.map((route: any, index: number) => {
@@ -42,6 +54,9 @@ const TabBar = ({ state, descriptors, navigation }: any) => {
               onPress={() => navigation.navigate(route.name)}
               style={[
                 styles.tab,
+                !isWidthFull
+                  ? { minWidth: width * 0.15 }
+                  : { minWidth: (width * 0.6) / state.routes.length },
                 focused && { paddingHorizontal: 20 },
                 focused && styles.activeTab,
               ]}
@@ -72,7 +87,6 @@ export default TabBar;
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: "absolute",
     alignSelf: "center",
   },
 
@@ -93,7 +107,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 20,
-
     elevation: 12,
   },
 
