@@ -152,18 +152,18 @@ export const VisitorHistory = [
   },
 ];
 
-const visitor = () => {
+const visitors = () => {
   const { top } = useSafeAreaInsets();
   return (
     <View style={{ marginTop: top, flex: 1 }}>
       <VisitorHeaderContainer />
       <FlatList
-        data={VisitorHistory}
+        data={[]}
         ListEmptyComponent={
           <EmptyStateContainer
             title="No Visitors Yet"
             subTitle="You don't have any active or expected visitors scheduled right now."
-            buttonTitle="Invite a Visitor"
+            buttonTitle="We'll Notify You"
           />
         }
         renderItem={({ item, index }: { item: any; index: number }) => (
@@ -178,4 +178,4 @@ const visitor = () => {
   );
 };
 
-export default visitor;
+export default visitors;

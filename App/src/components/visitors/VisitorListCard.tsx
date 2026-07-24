@@ -1,15 +1,7 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { LinearGradient } from "expo-linear-gradient";
-import Colors from "@/constants/color";
-import { Fonts, FontSize } from "@/constants/font";
 import Button from "@/components/common/Button";
 
 const STATUS_CONFIG = {
@@ -30,11 +22,23 @@ const STATUS_CONFIG = {
   },
 } as any;
 
-const VisitorHistoryTicketCard = ({ item }: { item: any }) => {
+const VisitorHistoryTicketCard = ({
+  item,
+  numberOfItems,
+  idx,
+}: {
+  item: any;
+  numberOfItems: number;
+  idx: number;
+}) => {
   const statusStyle = STATUS_CONFIG[item.status] ?? STATUS_CONFIG.Upcoming;
-  const { width } = useWindowDimensions();
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { marginBottom: numberOfItems == idx + 1 ? 100 : 20 },
+      ]}
+    >
       {/* Top Ticket */}
       <LinearGradient colors={["#FFFFFF", "#F8FBFF"]} style={styles.card}>
         {/* Header */}
@@ -100,40 +104,6 @@ const VisitorHistoryTicketCard = ({ item }: { item: any }) => {
             <Text style={styles.infoValue}>{item.info.time}</Text>
           </View>
         </View>
-
-        {/* Botton */}
-        {/* <TouchableOpacity
-          accessibilityRole="button"
-          //   onPress={() => Linking.openURL(`tel:${item.phone}`)}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-            paddingVertical: 9,
-            paddingHorizontal: 20,
-            borderRadius: 20,
-            backgroundColor: "#2f94face",
-            alignSelf: "center",
-            justifyContent: "center",
-            width: "90%",
-            marginBottom: 10,
-          }}
-        >
-          <Ionicons
-            name="arrow-up-right-box-outline"
-            size={16}
-            color={Colors.white}
-          />
-          <Text
-            style={{
-              color: Colors.white,
-              fontFamily: Fonts.semibold,
-              fontSize: FontSize.sm,
-            }}
-          >
-            View Details
-          </Text>
-        </TouchableOpacity> */}
         <View
           style={{
             flexDirection: "column",
@@ -250,6 +220,7 @@ const styles = StyleSheet.create({
 
   separator: {
     width: 1,
+    outlineStyle: "dashed",
     backgroundColor: "#d5d7dc",
     marginHorizontal: 10,
   },
