@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app",
-    "slug": "app",
+    "name": "Portl",
+    "slug": "society-management-app-5wgmm44rrismaundwakcd",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -17,7 +17,13 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.dhruv.portl",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
@@ -28,9 +34,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#FFFFFF",
           "android": {
-            "image": "./assets/images/splash-icon.png",
+            "image": "./assets/images/splash-icon.jpeg",
             "imageWidth": 76
           }
         }
@@ -49,6 +55,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a7c1dd88-bb6b-47c3-b20f-9a439da16cf0"
+      }
+    },
+    "owner": "dhruvvarshneys-team"
   }
 }
