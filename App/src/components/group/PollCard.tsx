@@ -1,34 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@react-native-vector-icons/ionicons";
 import Colors from "@/constants/color";
+import { PollData } from "@/store/community.store";
 import { Fonts } from "@/constants/font";
+import { useAuthStore } from "@/store/auth.store";
 
-interface PollOption {
-  id: string;
-  text: string;
-  votes: number;
-}
+// Helper function to format timestamp if timeAgo is not supplied directly
+const formatTimeAgo = (dateInput?: string | Date): string => {
+  if (!dateInput) return "Just now";
+  const date = new Date(dateInput);
+  const now = new Date();
+  const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-interface PollData {
-  _id: string;
-  authorName: string;
-  question: string;
-  options: PollOption[];
-  totalVotes: number;
-  userVotedOptionId?: string;
-  timeAgo: string;
-}
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+};
 
-const PollCard = ({
-  poll,
-  onVote,
-}: {
+interface PollCardProps {
   poll: PollData;
   onVote: (pollId: string, optionId: string) => void;
-}) => {
-  const hasVoted = poll.userVotedOptionId !== undefined;
+}
+
+const PollCard = ({ poll, onVote }: PollCardProps) => {
+  // 1. Call hooks at the top level of the component
+  const { user } = useAuthStore();
+  const userId = user?._id;
+
+  const displayTime = poll.timeAgo || formatTimeAgo(poll.createdAt);
+
+  // 2. Check overall voting status (from top-level votedUserIds or poll flags)
+  const hasVoted = Boolean(userId && poll.votedUserIds?.includes(userId));
+
+  // 3. Find which option ID the current logged-in user selected
+  const userVotedOption = poll.options.find(
+    (option: any) => userId && option.votedUserIds?.includes(userId),
+  );
+
+  // Use userVotedOptionId from API response as fallback if present
+  const votedOptionId = userVotedOption?._id || poll.userVotedOptionId;
 
   return (
     <View style={styles.cardContainer}>
@@ -38,7 +54,7 @@ const PollCard = ({
           <Ionicons name="bar-chart-outline" size={14} color={Colors.primary} />
           <Text style={styles.authorText}>{poll.authorName}</Text>
         </View>
-        <Text style={styles.timeText}>{poll.timeAgo}</Text>
+        <Text style={styles.timeText}>{displayTime}</Text>
       </View>
 
       {/* Poll Question */}
@@ -46,8 +62,12 @@ const PollCard = ({
 
       {/* Options List */}
       <View style={styles.optionsList}>
-        {poll.options.map((option) => {
-          const isSelected = poll.userVotedOptionId === option.id;
+        {poll.options.map((option: any) => {
+          const optionId = option._id || option.id;
+
+          // Check if THIS option is the one the user selected
+          const isSelected = votedOptionId === optionId;
+
           const percentage =
             poll.totalVotes > 0
               ? Math.round((option.votes / poll.totalVotes) * 100)
@@ -55,16 +75,16 @@ const PollCard = ({
 
           return (
             <TouchableOpacity
-              key={option.id}
+              key={optionId}
               activeOpacity={hasVoted ? 1 : 0.7}
-              disabled={hasVoted}
-              onPress={() => onVote(poll._id, option.id)}
+              disabled={hasVoted} // Disables voting if already voted
+              onPress={() => onVote(poll._id, optionId)}
               style={[
                 styles.optionButton,
                 isSelected && styles.optionButtonSelected,
               ]}
             >
-              {/* Animated/Filled Progress Bar when voted */}
+              {/* Progress Bar (Visible only after voting) */}
               {hasVoted && (
                 <View style={styles.progressBarBackground}>
                   <LinearGradient
@@ -83,7 +103,7 @@ const PollCard = ({
                 </View>
               )}
 
-              {/* Option Text Content */}
+              {/* Option Content */}
               <View style={styles.optionContent}>
                 <View style={styles.optionLeft}>
                   <View
@@ -106,7 +126,7 @@ const PollCard = ({
                   </Text>
                 </View>
 
-                {/* Percentage Display */}
+                {/* Percentage Display (Visible only after voting) */}
                 {hasVoted && (
                   <Text
                     style={[

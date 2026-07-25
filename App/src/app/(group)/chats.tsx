@@ -24,7 +24,6 @@ import { chatService } from "@/services/community.services";
 import { Message } from "@/types/community";
 import { useAuthStore } from "@/store/auth.store";
 
-const CURRENT_USER_ID = "687f9c2a4e8f1d9a3b7c1005";
 const POLLING_INTERVAL = 3000; // 3 seconds interval
 
 const ChatInput = ({
@@ -188,7 +187,7 @@ const Chats = () => {
     try {
       await chatService.sendMessage({
         societyId,
-        userId: CURRENT_USER_ID,
+        userId: user?._id ?? "",
         name: user?.name ?? "",
         message: text,
       });
@@ -219,7 +218,7 @@ const Chats = () => {
                 paddingTop: focus ? 0 : 80, // Clear the absolute input bar space
               }}
               renderItem={({ item, index }) => {
-                const isMe = item.userId === CURRENT_USER_ID;
+                const isMe = item.userId === user?._id;
                 return (
                   <View
                     style={{

@@ -31,3 +31,52 @@ export const chatService = {
     return data;
   },
 };
+
+export interface CreatePollPayload {
+  societyId: string;
+  authorName: string;
+  question: string;
+  options: string[];
+}
+
+export interface VotePollPayload {
+  userId: string;
+  optionId: string;
+}
+
+export const pollService = {
+  getPolls: async (societyId: string, lastPollId?: string) => {
+    try {
+      console.log("PRESENT");
+      const response = await api.get(`/community/polls/${societyId}`);
+      // console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching polls:", error?.response?.data || error);
+      throw error;
+    }
+  },
+
+  createPoll: async (payload: CreatePollPayload) => {
+    try {
+      const response = await api.post("/community/poll", payload);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error creating poll:", error?.response?.data || error);
+      throw error;
+    }
+  },
+
+  votePoll: async (pollId: string, payload: VotePollPayload) => {
+    try {
+      const response = await api.post(
+        `/community/polls/${pollId}/vote`,
+        payload,
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error("Error voting on poll:", error?.response?.data || error);
+      throw error;
+    }
+  },
+};
