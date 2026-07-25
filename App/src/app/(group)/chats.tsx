@@ -1,4 +1,3 @@
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,
@@ -7,213 +6,43 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
   Animated,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@react-native-vector-icons/ionicons";
-
-import Colors from "@/constants/color";
-import { Fonts } from "@/constants/font";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BlurView } from "expo-blur";
 
+import Colors from "@/constants/color";
+import { Fonts } from "@/constants/font";
+import { useChatStore } from "@/store/community.store";
+import { useSocietyStore } from "@/store/society.store";
+import { chatService } from "@/services/community.services";
+import { Message } from "@/types/community";
+import { useAuthStore } from "@/store/auth.store";
+
 const CURRENT_USER_ID = "687f9c2a4e8f1d9a3b7c1005";
+const POLLING_INTERVAL = 3000; // 3 seconds interval
 
-interface IMessages {
-  _id: string;
-  userId: string;
-  name: string;
-  message: string;
-}
-[];
-
-const messages = [
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2001",
-    userId: "687f9c2a4e8f1d9a3b7c1001",
-    name: "Rahul Sharma",
-    message: "Does anyone know when the water supply will resume?",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2002",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "Maintenance team said it'll be restored by 5 PM.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2003",
-    userId: "687f9c2a4e8f1d9a3b7c1002",
-    name: "Priya Verma",
-    message: "Thanks for the update!",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2004",
-    userId: "687f9c2a4e8f1d9a3b7c1003",
-    name: "Amit Gupta",
-    message: "Clubhouse booking opens tomorrow morning.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2005",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "Perfect, I'll reserve a slot.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2006",
-    userId: "687f9c2a4e8f1d9a3b7c1004",
-    name: "Neha Singh",
-    message: "Has anyone received today's newspaper?",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2007",
-    userId: "687f9c2a4e8f1d9a3b7c1006",
-    name: "Vikram Joshi",
-    message: "Security has kept a few copies at the gate.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2008",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "I'll collect mine this evening.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2009",
-    userId: "687f9c2a4e8f1d9a3b7c1007",
-    name: "Ananya Mishra",
-    message: "Yoga session starts at 7 AM tomorrow.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2010",
-    userId: "687f9c2a4e8f1d9a3b7c1008",
-    name: "Rohit Mehta",
-    message: "Looking forward to it!",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2011",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "See you there.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2012",
-    userId: "687f9c2a4e8f1d9a3b7c1009",
-    name: "Sneha Kapoor",
-    message: "Please don't park near the fire exit.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2013",
-    userId: "687f9c2a4e8f1d9a3b7c1010",
-    name: "Karan Malhotra",
-    message: "Visitor parking is available in Block C.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2014",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "Thanks for letting everyone know.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2015",
-    userId: "687f9c2a4e8f1d9a3b7c1001",
-    name: "Rahul Sharma",
-    message: "Any update on the lift maintenance?",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2016",
-    userId: "687f9c2a4e8f1d9a3b7c1002",
-    name: "Priya Verma",
-    message: "Technicians are expected by noon.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2017",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "Hopefully it gets fixed today.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2018",
-    userId: "687f9c2a4e8f1d9a3b7c1003",
-    name: "Amit Gupta",
-    message: "Kids' drawing competition starts this weekend.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2019",
-    userId: "687f9c2a4e8f1d9a3b7c1004",
-    name: "Neha Singh",
-    message: "Registrations close tomorrow evening.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2020",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "I've already registered my nephew.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2021",
-    userId: "687f9c2a4e8f1d9a3b7c1006",
-    name: "Vikram Joshi",
-    message: "Anyone interested in badminton this evening?",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2022",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "Count me in!",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2023",
-    userId: "687f9c2a4e8f1d9a3b7c1007",
-    name: "Ananya Mishra",
-    message: "I'll join after work.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2024",
-    userId: "687f9c2a4e8f1d9a3b7c1008",
-    name: "Rohit Mehta",
-    message: "Can someone share the court timing?",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2025",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "6 PM to 8 PM every weekday.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2026",
-    userId: "687f9c2a4e8f1d9a3b7c1009",
-    name: "Sneha Kapoor",
-    message: "Rain is expected tonight.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2027",
-    userId: "687f9c2a4e8f1d9a3b7c1010",
-    name: "Karan Malhotra",
-    message: "Please close your balcony windows.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2028",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "Thanks for the reminder.",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2029",
-    userId: "687f9c2a4e8f1d9a3b7c1001",
-    name: "Rahul Sharma",
-    message: "Have a great evening everyone!",
-  },
-  {
-    _id: "687f9c2a4e8f1d9a3b7c2030",
-    userId: CURRENT_USER_ID,
-    name: "You",
-    message: "You too! 😊",
-  },
-];
-
-const ChatInput = ({ focus, setFocus }: any) => {
+const ChatInput = ({
+  focus,
+  setFocus,
+  onSend,
+}: {
+  focus: boolean;
+  setFocus: (val: boolean) => void;
+  onSend: (text: string) => void;
+}) => {
   const [message, setMessage] = useState("");
+
+  const handlePressSend = () => {
+    if (!message.trim()) return;
+    onSend(message);
+    setMessage("");
+  };
 
   return (
     <BlurView
@@ -242,7 +71,7 @@ const ChatInput = ({ focus, setFocus }: any) => {
           style={styles.input}
         />
 
-        <TouchableOpacity activeOpacity={0.85}>
+        <TouchableOpacity activeOpacity={0.85} onPress={handlePressSend}>
           <LinearGradient
             colors={["#6DBBFF", "#3B9DFF", "#1E7CF8"]}
             start={{ x: 0, y: 0 }}
@@ -257,12 +86,72 @@ const ChatInput = ({ focus, setFocus }: any) => {
   );
 };
 
+// ... keep imports and ChatInput component intact
+
 const Chats = () => {
   const [keyboardHeight] = useState(new Animated.Value(0));
   const [focus, setFocus] = useState(false);
 
-  // const flatListRef = useRef<FlatList<IMessages>>(null);
+  const { selectedSociety } = useSocietyStore();
+  const {
+    messages,
+    setMessages,
+    appendNewMessages,
+    isInitialLoading,
+    setInitialLoading,
+  } = useChatStore();
 
+  const societyId = selectedSociety?._id;
+  const isPollingRef = useRef(false);
+  const latestMessageIdRef = useRef<string | undefined>(undefined);
+
+  // Keep latestMessageIdRef synchronized with the newest message (index 0)
+  useEffect(() => {
+    if (messages.length > 0) {
+      latestMessageIdRef.current = messages[0]._id;
+    }
+  }, [messages]);
+
+  // Polling setup
+  useEffect(() => {
+    if (!societyId) return;
+
+    const fetchMessages = async (isFirstLoad = false) => {
+      if (isPollingRef.current) return;
+      isPollingRef.current = true;
+
+      try {
+        if (isFirstLoad) setInitialLoading(true);
+
+        const lastId = isFirstLoad ? undefined : latestMessageIdRef.current;
+        const response = await chatService.getMessages(societyId, lastId);
+
+        if (response?.success && response.data?.length > 0) {
+          if (isFirstLoad) {
+            // Reverse incoming array (oldest-to-newest) so newest sits at index 0
+            setMessages([...response.data].reverse());
+          } else {
+            appendNewMessages(response.data);
+          }
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      } finally {
+        isPollingRef.current = false;
+        if (isFirstLoad) setInitialLoading(false);
+      }
+    };
+
+    fetchMessages(true);
+
+    const timerId = setInterval(() => {
+      fetchMessages(false);
+    }, POLLING_INTERVAL);
+
+    return () => clearInterval(timerId);
+  }, [societyId]);
+
+  // Keyboard listeners...
   useEffect(() => {
     const showEvent =
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
@@ -291,6 +180,23 @@ const Chats = () => {
     };
   }, []);
 
+  const { user } = useAuthStore();
+
+  const handleSendMessage = async (text: string) => {
+    if (!societyId) return;
+
+    try {
+      await chatService.sendMessage({
+        societyId,
+        userId: CURRENT_USER_ID,
+        name: user?.name ?? "",
+        message: text,
+      });
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: Colors.surface }}>
       <SafeAreaView
@@ -298,114 +204,127 @@ const Chats = () => {
         edges={["top", "left", "right"]}
       >
         <Animated.View style={{ flex: 1, paddingBottom: keyboardHeight }}>
-          <FlatList
-            // ref={flatListRef}
-            data={messages}
-            keyExtractor={(item) => item._id}
-            inverted
-            contentContainerStyle={{
-              padding: 16,
-              flexGrow: 1,
-              flexDirection: "column-reverse",
-              justifyContent: "flex-end",
-            }}
-            // Dismiss keyboard when scrolling down
-            // keyboardDismissMode="on-drag"
-            renderItem={({ item, index }) => {
-              const isMe = item.userId === CURRENT_USER_ID;
-              return (
-                <View
-                  style={{
-                    alignItems: isMe ? "flex-end" : "flex-start",
-                    marginBottom:
-                      messages.length == index + 1 && !focus ? 80 : 14,
-                  }}
-                >
-                  {!isMe && (
-                    <Text
-                      style={{
-                        fontFamily: Fonts.semibold,
-                        color: Colors.primary,
-                        marginBottom: 4,
-                        marginLeft: 10,
-                        fontSize: 12,
-                      }}
-                    >
-                      {item.name}
-                    </Text>
-                  )}
+          {isInitialLoading && messages.length === 0 ? (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+          ) : (
+            <FlatList
+              data={messages}
+              keyExtractor={(item) => item._id}
+              inverted
+              contentContainerStyle={{
+                paddingHorizontal: 16,
+                paddingBottom: 16, // Top of the chat screen
+                paddingTop: focus ? 0 : 80, // Clear the absolute input bar space
+              }}
+              renderItem={({ item, index }) => {
+                const isMe = item.userId === CURRENT_USER_ID;
+                return (
+                  <View
+                    style={{
+                      alignItems: isMe ? "flex-end" : "flex-start",
+                      marginBottom: 14,
+                    }}
+                  >
+                    {!isMe && (
+                      <Text
+                        style={{
+                          fontFamily: Fonts.semibold,
+                          color: Colors.primary,
+                          marginBottom: 4,
+                          marginLeft: 10,
+                          fontSize: 12,
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    )}
 
-                  {isMe ? (
-                    <LinearGradient
-                      colors={["#6DBBFF", "#3B9DFF", "#1E7CF8"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={{
-                        maxWidth: "78%",
-                        paddingHorizontal: 16,
-                        paddingVertical: 12,
-                        borderTopLeftRadius: 22,
-                        borderTopRightRadius: 22,
-                        borderBottomLeftRadius: 22,
-                        borderBottomRightRadius: 6,
-                        elevation: 10,
-                        shadowColor: "#18161682",
-                      }}
-                    >
-                      <Text
+                    {isMe ? (
+                      <LinearGradient
+                        colors={["#6DBBFF", "#3B9DFF", "#1E7CF8"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
                         style={{
-                          color: "#fff",
-                          fontFamily: Fonts.medium,
-                          fontSize: 15,
-                          lineHeight: 22,
+                          maxWidth: "78%",
+                          paddingHorizontal: 16,
+                          paddingVertical: 12,
+                          borderTopLeftRadius: 22,
+                          borderTopRightRadius: 22,
+                          borderBottomLeftRadius: 22,
+                          borderBottomRightRadius: 6,
+                          elevation: 10,
+                          shadowColor: "#18161682",
                         }}
                       >
-                        {item.message}
-                      </Text>
-                    </LinearGradient>
-                  ) : (
-                    <View
-                      style={{
-                        maxWidth: "78%",
-                        borderWidth: 1,
-                        borderColor: "#00000016",
-                        paddingHorizontal: 16,
-                        paddingVertical: 12,
-                        borderTopLeftRadius: 6,
-                        borderTopRightRadius: 22,
-                        borderBottomLeftRadius: 22,
-                        borderBottomRightRadius: 22,
-                        backgroundColor: Colors.surface,
-                        elevation: 6,
-                        shadowColor: "#18161682",
-                      }}
-                    >
-                      <Text
+                        <Text
+                          style={{
+                            color: "#fff",
+                            fontFamily: Fonts.medium,
+                            fontSize: 15,
+                            lineHeight: 22,
+                          }}
+                        >
+                          {item.message}
+                        </Text>
+                      </LinearGradient>
+                    ) : (
+                      <View
                         style={{
-                          color: Colors.text.primary,
-                          fontFamily: Fonts.medium,
-                          fontSize: 15,
-                          lineHeight: 22,
+                          maxWidth: "78%",
+                          borderWidth: 1,
+                          borderColor: "#00000016",
+                          paddingHorizontal: 16,
+                          paddingVertical: 12,
+                          borderTopLeftRadius: 6,
+                          borderTopRightRadius: 22,
+                          borderBottomLeftRadius: 22,
+                          borderBottomRightRadius: 22,
+                          backgroundColor: Colors.surface,
+                          elevation: 6,
+                          shadowColor: "#18161682",
                         }}
                       >
-                        {item.message}
-                      </Text>
-                    </View>
-                  )}
-                </View>
-              );
-            }}
+                        <Text
+                          style={{
+                            color: Colors.text.primary,
+                            fontFamily: Fonts.medium,
+                            fontSize: 15,
+                            lineHeight: 22,
+                          }}
+                        >
+                          {item.message}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                );
+              }}
+            />
+          )}
+
+          <ChatInput
+            focus={focus}
+            setFocus={setFocus}
+            onSend={handleSendMessage}
           />
-          <ChatInput focus={focus} setFocus={setFocus} />
         </Animated.View>
       </SafeAreaView>
     </View>
   );
 };
 
+// export default Chats;
+
 export default Chats;
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   container: {
     marginBottom: 10,
     marginHorizontal: 12,
@@ -426,7 +345,6 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 12,
   },
-
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -435,7 +353,6 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     paddingVertical: 6,
   },
-
   input: {
     minHeight: 20,
     maxHeight: 50,
@@ -447,7 +364,6 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     marginRight: 10,
   },
-
   sendButton: {
     width: 44,
     height: 44,
